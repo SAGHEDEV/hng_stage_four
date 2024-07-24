@@ -18,6 +18,7 @@ interface InputProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   icon: typeof BiSolidLock;
   placeholder: string;
+  error: string;
 }
 
 interface LinkProps {}
@@ -33,6 +34,11 @@ export const InputEmail = (props: InputProps) => {
       <span className="text-[#333333]">{props.label}</span>
 
       <div className="relative text-[16px] bg-white !gap-[12px] px-[12px] py[16px]  rounded-xl !w-full md:!w-[396px] !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#633CFF] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#633CFF]/25 ">
+      {props.error !== "" ? (
+          <span className="abolute top-1/2 right-4 w-full text-right">{props.error}</span>
+        ) : (
+          ""
+        )}
         <span className="absolute top-1/2 -translate-y-1/2">
           <CgMail size={20} className="pointer-event-none" />
         </span>
@@ -42,7 +48,9 @@ export const InputEmail = (props: InputProps) => {
           onChange={(e) => props.onChange(e)}
           placeholder={props.placeholder}
           className="pl-8 border-none bg-transparent focus:border-none focus:outline-none w-full h-full"
+          required
         />
+       
       </div>
     </div>
   );
@@ -62,7 +70,13 @@ export const InputPassword = (props: InputProps) => {
           onChange={(e) => props.onChange(e)}
           placeholder={props.placeholder}
           className="pl-8 border-none bg-transparent focus:border-none focus:outline-none w-full h-full"
+          required
         />
+         {props.error !== "" ? (
+          <span className="abolute top-1/2 -translate-y-1/2 left-0 right-3 text-[10px] text-red-600">{props.error}</span>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

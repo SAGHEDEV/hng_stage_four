@@ -1,15 +1,83 @@
 "use client";
 
-import { Button, Form } from "antd";
 import Image from "next/image";
-import { InputComponent, InputPassword } from "./../components/Input";
+import { InputEmail, InputPassword } from "./../components/Input";
 import { CgMail } from "react-icons/cg";
 import { BiSolidLock } from "react-icons/bi";
 import Link from "next/link";
+import { signInWithEmailAndPassword } from "firebase/auth";
+// import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/firbase";
+import { notification } from "antd";
+import { useRouter } from "next/navigation";
+import {
+  useReducer,
+  ChangeEvent,
+  FormEvent,
+  FormEventHandler,
+  useState,
+  MouseEventHandler,
+} from "react";
 
-const LoginPage = () => {
+const initialUserState = {
+  email: "",
+  password: "",
+};
+
+function reducer(
+  state: { email: string; password: string },
+  action: { type: string; payload: string }
+) {
+  switch (action.type) {
+    case "setEmail":
+      return { ...state, email: action.payload };
+    case "setPassword":
+      return { ...state, password: action.payload };
+
+    default:
+      return state;
+  }
+}
+
+const Page = () => {
+  const [state, dispatch] = useReducer(reducer, initialUserState);
+  const [passwordErr, setPasswordErr] = useState("");
+
+  const router = useRouter();
+
+  // const [createUserWithEmailAndPassword] =
+  //   useCreateUserWithEmailAndPassword(auth);
+
+  const handleLoginAccount = async () => {
+    if (state.password.length < 8) {
+      setPasswordErr("Password Should not be less than 8");
+      console.log(passwordErr);
+    } else {
+      try {
+        const res = await signInWithEmailAndPassword(
+          auth,
+          state.email,
+          state.password
+        );
+        console.log(res);
+        notification.success({
+          message: `Login Successfull`,
+          description: `You can now create and share your link as you wish!`,
+        });
+        router.push("/");
+      } catch (e: any | { error?: { code: number; message: string } }) {
+        console.log(e);
+        notification.error({
+          message: `Error ${e?.error?.code}!`,
+          description: `${e?.error?.message}, Kindly recheck details!`,
+        });
+      }
+      setPasswordErr("");
+    }
+  };
+
   return (
-    <div className="w-full md:flex md:h-screen justify-center items-center flex-col gap-[51px] p-[32px]">
+    <div className="w-full md:flex md:h-screen justify-center items-center flex-col gap-[45px] p-[32px] py-6">
       <div className="flex justify-start md:justify-center items-start md:items-center">
         <Image
           src="/devlink-logo.png"
@@ -22,44 +90,53 @@ const LoginPage = () => {
       <div className="w-full md:bg-white md:w-[476px] rounded-xl py-[64px] md:p-10 flex justify-center items-center flex-col gap-10">
         <div className="w-full">
           <h2 className="text-2xl md:text-[32px] font-bold text-[#333333] mb-8">
-            Login
+            LogIn
           </h2>
           <p className="text-base text-[#737373]">
             Add your details below to get back into the app
           </p>
         </div>
 
-        <Form className="w-full flex justify-center items-center flex-col gap-6">
-          <Form.Item name="email" className="w-full !m-0">
-            <InputComponent
-              onChange={()=> console.log("bola")} label="Email Address" type="email" icon={CgMail} value=""
-            />
-          </Form.Item>
-     
-            <InputPassword
-             label="Confirm Password"
-             type="password"
-             icon={BiSolidLock}
-             value=""
-             onChange={()=> console.log("working")}
-            />
-          
-          <Button
-            size="large"
-            className="w-full font !h-[46px] text-[16px] !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#BEADFF] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
+        <form
+          className="w-full !flex justify-center items-center flex-col gap-6"
+          onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
+        >
+          <InputEmail
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              dispatch({ type: "setEmail", payload: e.target.value })
+            }
+            label="Email Address"
+            icon={CgMail}
+            value={state.email}
+            placeholder="Enter Email Address"
+            error=""
+          />
+          <InputPassword
+            label="Enter Correct Password"
+            icon={BiSolidLock}
+            value={state.password}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              dispatch({ type: "setPassword", payload: e.target.value })
+            }
+            placeholder="Enter Correct Password"
+            error={passwordErr}
+          />
+          <button
+            onClick={handleLoginAccount}
+            className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#BEADFF] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
           >
-            Login
-          </Button>
+            Login Account
+          </button>
           <p className="text-[16px] text-[#737373]">
-            Don’t have an account?
+            Don't have an account?
             <Link href="/create-account" className="text-[#633CFF]">
-              Create account
+              Login account
             </Link>
           </p>
-        </Form>
+        </form>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default Page;

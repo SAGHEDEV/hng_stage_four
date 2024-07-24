@@ -5,9 +5,19 @@ import { InputEmail, InputPassword } from "./../components/Input";
 import { CgMail } from "react-icons/cg";
 import { BiSolidLock } from "react-icons/bi";
 import Link from "next/link";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+// import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firbase";
-import { useReducer, ChangeEvent, FormEvent, useState } from "react";
+import { notification } from "antd";
+import {
+  useReducer,
+  ChangeEvent,
+  FormEvent,
+  FormEventHandler,
+  useState,
+  MouseEventHandler,
+} from "react";
+import { useRouter } from "next/navigation";
 
 const initialUserState = {
   email: "",
@@ -31,23 +41,52 @@ function reducer(
   }
 }
 
-const Page = () => {
-  console.log("Auth is", auth.config);
-  // const [createUserWithEmailAndPassword] =
-  //   useCreateUserWithEmailAndPassword(auth);
-
+const SignUpPage = () => {
   const [state, dispatch] = useReducer(reducer, initialUserState);
   const [passwordErr, setPasswordErr] = useState("");
   const [confirmErr, setConfirmErr] = useState("");
 
-  const handleCreateAccount = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(state.email, state.password, state.confirm_password);
-    if (state.password === state.confirm_password) {
-      setConfirmErr("Please check again! ");
-    }
-    if (state.password.length < 8) {
-      setConfirmErr("Should not be less than 8");
+  const router = useRouter();
+
+  // const [createUserWithEmailAndPassword] =
+  //   useCreateUserWithEmailAndPassword(auth);
+
+  const handleCreateAccount = async () => {
+    if (
+      state.password !== state.confirm_password &&
+      state.confirm_password !== ""
+    ) {
+      setConfirmErr("Password is different, Please check again! ");
+      setPasswordErr("");
+      console.log(confirmErr);
+    } else if (
+      state.password.length < 8 &&
+      state.password === state.confirm_password
+    ) {
+      setPasswordErr("Password Should not be less than 8");
+      setConfirmErr("");
+      console.log(passwordErr);
+    } else {
+      try {
+        const res = await createUserWithEmailAndPassword(
+          auth,
+          state.email,
+          state.password
+        );
+        notification.success({
+          message: `Account Created Successfully`,
+          description: `Kindly navigate to Login to log into your account`,
+        });
+        router.push("/login");
+      } catch (e: any | { error?: { code: number; message: string } }) {
+        console.log(e);
+        notification.error({
+          message: `Error ${e?.error?.code}!`,
+          description: `${e?.error?.message}, Kindly try again`,
+        });
+      }
+      setPasswordErr("");
+      setConfirmErr("");
     }
   };
 
@@ -74,7 +113,7 @@ const Page = () => {
 
         <form
           className="w-full !flex justify-center items-center flex-col gap-6"
-          onSubmit={(e: FormEvent<HTMLFormElement>) => handleCreateAccount(e)}
+          onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
         >
           <InputEmail
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -84,6 +123,7 @@ const Page = () => {
             icon={CgMail}
             value={state.email}
             placeholder="Enter Email Address"
+            error=""
           />
           <InputPassword
             label="Create Password"
@@ -93,6 +133,7 @@ const Page = () => {
               dispatch({ type: "setPassword", payload: e.target.value })
             }
             placeholder="Create Password"
+            error={passwordErr}
           />
           <InputPassword
             label="Confirm Password"
@@ -102,16 +143,17 @@ const Page = () => {
               dispatch({ type: "confirmPassword", payload: e.target.value })
             }
             placeholder="Confirm Password"
+            error={confirmErr}
           />
           <button
-            type="submit"
+            onClick={handleCreateAccount}
             className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#BEADFF] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
           >
             Create New Account
           </button>
           <p className="text-[16px] text-[#737373]">
             Already have an account?
-            <Link href="/create-account" className="text-[#633CFF]">
+            <Link href="/login" className="text-[#633CFF]">
               Login account
             </Link>
           </p>
@@ -121,4 +163,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default SignUpPage;
