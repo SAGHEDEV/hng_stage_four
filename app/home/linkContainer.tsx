@@ -63,9 +63,10 @@ const LinkContainer = () => {
         <div className="w-full p-6 border-t flex justify-end align-center">
           <button
             type="submit"
-            className="w-[91px] !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#BEADFF] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
+            className="w-[91px] h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#BEADFF] hover:shadow-md hover:shadow-[#633CFF] m-0"
+            disabled
           >
-            Save
+            Saver
           </button>
         </div>
       </form>

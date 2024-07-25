@@ -104,7 +104,7 @@ export const InputLink = (props: LinkProps) => {
           <FaLink size={16} className="pointer-event-none" />
         </span>
         <input
-          type="password"
+          type="text"
           value={props.value}
           onChange={(e) => props.onChange(e)}
           placeholder="e.g. https://www.platform.com/johnappleseed"
