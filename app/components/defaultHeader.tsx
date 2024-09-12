@@ -7,6 +7,7 @@ import { CgProfile } from "react-icons/cg";
 import { Button } from "antd";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const DefaultHeader = () => {
   const routes = [
@@ -21,6 +22,9 @@ const DefaultHeader = () => {
       icon: CgProfile,
     },
   ];
+
+  const pathname = usePathname();
+
   return (
     <div>
       <div className="hidden md:flex w-full bg-white p-4 rounded-xl justify-between items-center">
@@ -29,7 +33,11 @@ const DefaultHeader = () => {
         <div className="flex justify-center items-center gap-[16px]">
           {routes.map((route) => (
             <Link href={route.key} key={route.key}>
-              <div className="flex justify-center items-center gap-2 py-[11px] px-[27px] rounded-lg bg-[#EFEBFF] text-[#737373] cursor-pointer">
+              <div
+                className={`flex justify-center items-center gap-2 py-[11px] px-[27px] rounded-lg cursor-pointer hover:bg-[#737373]/20 ${
+                  pathname === route.key ? "bg-[#737373]/20 text-[#633CFF]" : ""
+                } `}
+              >
                 <route.icon size={20} />
                 <span className=" text-[16px] font-semibold">
                   {route.label}

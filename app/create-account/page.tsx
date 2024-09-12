@@ -75,7 +75,7 @@ const SignUpPage = () => {
         );
         notification.success({
           message: `Account Created Successfully`,
-          description: `Kindly navigate to Login to log into your account`,
+          description: `Navigating to Login page to log into your account`,
         });
         router.push("/login");
       } catch (e: any | { error?: { code: number; message: string } }) {
@@ -101,9 +101,9 @@ const SignUpPage = () => {
         />
       </div>
 
-      <div className="w-full md:bg-white md:w-[476px] rounded-xl py-[64px] md:p-10 flex justify-center items-center flex-col gap-10">
+      <div className="w-full md:bg-white md:w-[476px] rounded-xl py-[64px] md:p-10 flex justify-center items-center flex-col gap-7">
         <div className="w-full">
-          <h2 className="text-2xl md:text-[32px] font-bold text-[#333333] mb-8">
+          <h2 className="text-2xl md:text-[32px] font-bold text-[#333333] mb-4">
             Create Account
           </h2>
           <p className="text-base text-[#737373]">
@@ -151,7 +151,7 @@ const SignUpPage = () => {
           >
             Create New Account
           </button>
-          <p className="text-[16px] text-[#737373]">
+          <p className="text-sm text-[#737373]">
             Already have an account?
             <Link href="/login" className="text-[#633CFF]">
               Login account

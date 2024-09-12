@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const FrameContainer = () => {
   return (
-    <div className="hidden lg:block bg-white rounded-lg p-20">
+    <div className="hidden lg:block bg-white rounded-2xl p-20">
       <div className="!w-[307px] !h-[631px] relative">
         <Image
           src="/rectangle-main.png"

@@ -11,6 +11,7 @@ interface SingleLinkProp {
   link: Link;
   index: number;
   removeLink: (index: number) => void;
+  handleUpadteUrl: (inded: number, value: string) => void;
 }
 
 const SingleLink = (props: SingleLinkProp) => {
@@ -39,6 +40,7 @@ const SingleLink = (props: SingleLinkProp) => {
       icon: FaFacebook,
     },
   ];
+
   return (
     <div className="p-5 rounded-xl bg-[#FAFAFA] flex flex-col justify-center items-center">
       <span className="w-full flex justify-between items-center text-[16px] text-[#737373]">
@@ -61,9 +63,10 @@ const SingleLink = (props: SingleLinkProp) => {
         />
         <InputLink
           value={linkd}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setLinkd(e.target.value)
-          }
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            e.preventDefault();
+            setLinkd(e.target.value);
+          }}
         />
       </div>
     </div>

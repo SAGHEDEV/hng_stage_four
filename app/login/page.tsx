@@ -130,7 +130,7 @@ const Page = () => {
           <p className="text-[16px] text-[#737373]">
             Dont have an account?
             <Link href="/create-account" className="text-[#633CFF]">
-              Login account
+              Create account
             </Link>
           </p>
         </form>

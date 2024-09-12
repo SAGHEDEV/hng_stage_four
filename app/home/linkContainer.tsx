@@ -24,7 +24,19 @@ const LinkContainer = () => {
     setLinks(newLink);
   };
 
-  const handleLinkChange = () => {};
+  const handleUpadteUrl = (index: number, value: string) => {
+    const newLinks = [...links];
+    newLinks[index].url = value;
+    setLinks(newLinks);
+    console.log(links);
+  };
+
+  const handleUpdatePlatform = (index: number, value: string) => {
+    const newLinks = [...links];
+    newLinks[index].platform = value;
+    setLinks(newLinks);
+  };
+  console.log(links);
   return (
     <div className="w-full p-[40px] rounded-xl bg-white">
       <div className="w-full">
@@ -56,6 +68,7 @@ const LinkContainer = () => {
                 link={link}
                 index={index}
                 removeLink={removeLink}
+                handleUpadteUrl={handleUpadteUrl}
               />
             ))
           )}
@@ -66,7 +79,7 @@ const LinkContainer = () => {
             className="w-[91px] h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#BEADFF] hover:shadow-md hover:shadow-[#633CFF] m-0"
             disabled
           >
-            Saver
+            Save
           </button>
         </div>
       </form>

@@ -12,6 +12,12 @@ const handleCapitalize = (data: string) => {
   );
 };
 
+export interface FullLinkInter {
+  platform: string;
+  color: string;
+  icon: typeof BiSolidLock;
+}
+
 interface InputProps {
   value: string;
   label: string;
@@ -28,8 +34,8 @@ interface LinkProps {
 interface DropProps {
   setOpen: (value: boolean) => void;
   isOpen: boolean;
-  platData: { platform: string; color: string; icon: typeof BiSolidLock }[];
-  currentPlat: { platform: string; color: string; icon: typeof BiSolidLock };
+  platData: FullLinkInter[];
+  currentPlat: FullLinkInter;
   setCurrentPlat: (plat: {
     platform: string;
     color: string;
@@ -39,7 +45,7 @@ interface DropProps {
 
 export const InputEmail = (props: InputProps) => {
   return (
-    <div className="flex flex-col gap-[4px] text-[#333333] text-[12px] font-normal">
+    <div className="w-full flex flex-col gap-[4px] text-[#333333] text-[12px] font-normal">
       <span className="text-[#333333]">{props.label}</span>
 
       <div className="relative text-[16px] bg-white !gap-[12px] px-[12px] py[16px]  rounded-xl !w-full md:!w-[396px] !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#633CFF] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#633CFF]/25 ">
@@ -67,7 +73,7 @@ export const InputEmail = (props: InputProps) => {
 };
 export const InputPassword = (props: InputProps) => {
   return (
-    <div className="flex flex-col gap-[4px] text-[#333333] text-[12px] font-normal">
+    <div className="w-full flex flex-col gap-[4px] text-[#333333] text-[12px] font-normal">
       <span className="text-[#333333]">{props.label}</span>
 
       <div className="relative text-[16px] bg-white !gap-[12px] px-[12px] py[16px]  rounded-xl !w-full md:!w-[396px] !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#633CFF] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#633CFF]/25 ">
