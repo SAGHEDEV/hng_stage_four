@@ -35,7 +35,7 @@ const DefaultHeader = () => {
             <Link href={route.key} key={route.key}>
               <div
                 className={`flex justify-center items-center gap-2 py-[11px] px-[27px] rounded-lg cursor-pointer hover:bg-[#737373]/20 ${
-                  pathname === route.key ? "bg-[#737373]/20 text-[#633CFF]" : ""
+                  pathname === route.key ? "bg-[#737373]/20 text-[#04357c]" : ""
                 } `}
               >
                 <route.icon size={20} />
@@ -47,7 +47,7 @@ const DefaultHeader = () => {
           ))}
         </div>
 
-        <Button className="!h-[46px] !w-[114px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
+        <Button className="!h-[46px] !w-[114px] text-[16px] !font-semibold !text-[#04357c] !bg-white border !border-[#04357c] hover:!bg-[#EFEBFF]  !m-0">
           Preview
         </Button>
       </div>
@@ -70,7 +70,7 @@ const DefaultHeader = () => {
           ))}
         </div>
 
-        <Button className="!h-[46px] !w-[52px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
+        <Button className="!h-[46px] !w-[52px] text-[16px] !font-semibold !text-[#04357c] !bg-white border !border-[#04357c] hover:!bg-[#EFEBFF]  !m-0">
           <MdOutlineRemoveRedEye size={20} />
         </Button>
       </div>

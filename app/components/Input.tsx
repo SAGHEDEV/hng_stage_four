@@ -32,6 +32,7 @@ interface LinkProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 interface DropProps {
+  index: number;
   setOpen: (value: boolean) => void;
   isOpen: boolean;
   platData: FullLinkInter[];
@@ -41,6 +42,10 @@ interface DropProps {
     color: string;
     icon: typeof BiSolidLock;
   }) => void;
+  onChange: (
+    index: number,
+    value: { platform: string; color: string; icon: any }
+  ) => void;
 }
 
 export const InputEmail = (props: InputProps) => {
@@ -48,7 +53,7 @@ export const InputEmail = (props: InputProps) => {
     <div className="w-full flex flex-col gap-[4px] text-[#333333] text-[12px] font-normal">
       <span className="text-[#333333]">{props.label}</span>
 
-      <div className="relative text-[16px] bg-white !gap-[12px] px-[12px] py[16px]  rounded-xl !w-full md:!w-[396px] !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#633CFF] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#633CFF]/25 ">
+      <div className="relative text-[16px] bg-white !gap-[12px] px-[12px] py[16px]  rounded-xl !w-full md:!w-[396px] !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#04357c] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#04357c]/25 ">
         {props.error !== "" ? (
           <span className="abolute top-1/2 right-4 w-full text-right">
             {props.error}
@@ -76,7 +81,7 @@ export const InputPassword = (props: InputProps) => {
     <div className="w-full flex flex-col gap-[4px] text-[#333333] text-[12px] font-normal">
       <span className="text-[#333333]">{props.label}</span>
 
-      <div className="relative text-[16px] bg-white !gap-[12px] px-[12px] py[16px]  rounded-xl !w-full md:!w-[396px] !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#633CFF] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#633CFF]/25 ">
+      <div className="relative text-[16px] bg-white !gap-[12px] px-[12px] py[16px]  rounded-xl !w-full md:!w-[396px] !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#04357c] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#04357c]/25 ">
         <span className="absolute top-1/2 -translate-y-1/2">
           <BiSolidLock size={20} className="pointer-event-none" />
         </span>
@@ -105,7 +110,7 @@ export const InputLink = (props: LinkProps) => {
     <div className="w-full flex flex-col gap-[4px] text-[#333333] text-[12px] font-normal">
       <span className="text-[#333333]">Link</span>
 
-      <div className="w-full relative text-[16px] bg-white !gap-[12px] px-[16px] py[16px]  rounded-xl  !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#633CFF] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#633CFF]/25 ">
+      <div className="w-full relative text-[16px] bg-white !gap-[12px] px-[16px] py[16px]  rounded-xl  !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#04357c] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#04357c]/25 ">
         <span className="absolute top-1/2 -translate-y-1/2">
           <FaLink size={16} className="pointer-event-none" />
         </span>
@@ -125,9 +130,9 @@ export const InputLink = (props: LinkProps) => {
 export const LinkType = (props: DropProps) => {
   return (
     <div className="w-full flex flex-col gap-[4px] text-[#333333] text-[12px] font-normal">
-      <span className="text-[#333333]">Paltform</span>
+      <span className="text-[#333333]">Platform</span>
 
-      <div className="relative text-[16px] bg-white px-[16px] cursor-pointer  rounded-xl !w-full !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#633CFF] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#633CFF]/25 ">
+      <div className="relative text-[16px] bg-white px-[16px] cursor-pointer  rounded-xl !w-full !h-[48px] !border !border-[#D9D9D9] focus-within:!border-[#04357c] focus-within:!border-2 focus-within:!shadow-xl focus:bg-transparent focus:!shadow-[#04357c]/25 ">
         <span className="absolute top-1/2 -translate-y-1/2">
           {props.platData?.map(
             (plat: { platform: string; icon: typeof BiSolidLock }) => {
@@ -168,6 +173,7 @@ export const LinkType = (props: DropProps) => {
                     onClick={() => {
                       props.setOpen(false);
                       props.setCurrentPlat(plat);
+                      props.onChange(props.index, plat);
                     }}
                   >
                     <plat.icon size={15} /> {handleCapitalize(plat.platform)}

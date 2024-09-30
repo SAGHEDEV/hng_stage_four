@@ -6,17 +6,9 @@ import { CgMail } from "react-icons/cg";
 import { BiSolidLock } from "react-icons/bi";
 import Link from "next/link";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-// import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firbase";
-import { notification } from "antd";
-import {
-  useReducer,
-  ChangeEvent,
-  FormEvent,
-  FormEventHandler,
-  useState,
-  MouseEventHandler,
-} from "react";
+import { Button, notification } from "antd";
+import { useReducer, ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const initialUserState = {
@@ -45,13 +37,12 @@ const SignUpPage = () => {
   const [state, dispatch] = useReducer(reducer, initialUserState);
   const [passwordErr, setPasswordErr] = useState("");
   const [confirmErr, setConfirmErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
-  // const [createUserWithEmailAndPassword] =
-  //   useCreateUserWithEmailAndPassword(auth);
-
   const handleCreateAccount = async () => {
+    setLoading(true);
     if (
       state.password !== state.confirm_password &&
       state.confirm_password !== ""
@@ -88,6 +79,7 @@ const SignUpPage = () => {
       setPasswordErr("");
       setConfirmErr("");
     }
+    setLoading(false);
   };
 
   return (
@@ -145,15 +137,16 @@ const SignUpPage = () => {
             placeholder="Confirm Password"
             error={confirmErr}
           />
-          <button
+          <Button
+            loading={loading}
             onClick={handleCreateAccount}
-            className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#BEADFF] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
+            className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#04357c] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#04357c] !m-0"
           >
             Create New Account
-          </button>
+          </Button>
           <p className="text-sm text-[#737373]">
             Already have an account?
-            <Link href="/login" className="text-[#633CFF]">
+            <Link href="/login" className="text-[#04357c]">
               Login account
             </Link>
           </p>

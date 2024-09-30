@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LinkType, InputLink } from "./Input";
 import { TbBrandGithubFilled } from "react-icons/tb";
 import { FaYoutube, FaFacebook } from "react-icons/fa";
@@ -12,16 +12,20 @@ interface SingleLinkProp {
   index: number;
   removeLink: (index: number) => void;
   handleUpadteUrl: (inded: number, value: string) => void;
+  handleUpdatePlatform: (
+    index: number,
+    value: { platform: string; color: string; icon: any }
+  ) => void;
 }
 
 const SingleLink = (props: SingleLinkProp) => {
   const [optionOpen, setOptionOpen] = useState(false);
-  const [currentPlat, setCurrentPlat] = useState({
-    platform: "Github",
-    color: "black",
-    icon: TbBrandGithubFilled,
-  });
+  const [currentPlat, setCurrentPlat] = useState(props.link.platform);
   const [linkd, setLinkd] = useState(props.link?.url);
+
+  useEffect(() => {
+    props.handleUpadteUrl(props.index, linkd);
+  }, [setLinkd, linkd]);
 
   const platData = [
     {
@@ -55,11 +59,13 @@ const SingleLink = (props: SingleLinkProp) => {
 
       <div className="py-3 w-full flex flex-col gap-3">
         <LinkType
+          index={props.index}
           setOpen={setOptionOpen}
           isOpen={optionOpen}
           platData={platData}
           currentPlat={currentPlat}
           setCurrentPlat={setCurrentPlat}
+          onChange={props.handleUpdatePlatform}
         />
         <InputLink
           value={linkd}

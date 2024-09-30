@@ -7,7 +7,7 @@ import EmptyLink from "../components/emptyLink";
 import { FormEvent } from "react";
 
 export interface Link {
-  platform: string;
+  platform: { platform: string; color: string; icon: any };
   url: string;
   error: string;
 }
@@ -16,7 +16,10 @@ const LinkContainer = () => {
   const [links, setLinks] = useState<Link[]>([]);
 
   const addNewLink = () => {
-    setLinks([...links, { platform: "", url: "", error: "" }]);
+    setLinks([
+      ...links,
+      { platform: { platform: "", color: "", icon: null }, url: "", error: "" },
+    ]);
   };
   const removeLink = (index: number) => {
     const newLink = [...links];
@@ -26,17 +29,25 @@ const LinkContainer = () => {
 
   const handleUpadteUrl = (index: number, value: string) => {
     const newLinks = [...links];
-    newLinks[index].url = value;
+    // newLinks[index].url = value;
+    newLinks[index] = {
+      ...newLinks[index], // Keep the other fields unchanged
+      url: value, // Update the specific field dynamically
+    };
     setLinks(newLinks);
     console.log(links);
   };
 
-  const handleUpdatePlatform = (index: number, value: string) => {
+  const handleUpdatePlatform = (
+    index: number,
+    value: { platform: string; color: string; icon: any }
+  ) => {
     const newLinks = [...links];
     newLinks[index].platform = value;
     setLinks(newLinks);
+    console.log(links);
   };
-  console.log(links);
+  // console.log(links);
   return (
     <div className="w-full p-[40px] rounded-xl bg-white">
       <div className="w-full">
@@ -49,7 +60,7 @@ const LinkContainer = () => {
         </p>
         <Button
           onClick={() => addNewLink()}
-          className="!h-[46px] !w-full text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0"
+          className="!h-[46px] !w-full text-[16px] !font-semibold !text-[#04357c] !bg-white border !border-[#04357c] hover:!bg-[#EFEBFF]  !m-0"
         >
           + Add new link
         </Button>
@@ -69,6 +80,7 @@ const LinkContainer = () => {
                 index={index}
                 removeLink={removeLink}
                 handleUpadteUrl={handleUpadteUrl}
+                handleUpdatePlatform={handleUpdatePlatform}
               />
             ))
           )}
@@ -76,7 +88,7 @@ const LinkContainer = () => {
         <div className="w-full p-6 border-t flex justify-end align-center">
           <button
             type="submit"
-            className="w-[91px] h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#BEADFF] hover:shadow-md hover:shadow-[#633CFF] m-0"
+            className="w-[91px] h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#04357c] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#04357c] m-0"
             disabled
           >
             Save

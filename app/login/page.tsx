@@ -8,7 +8,7 @@ import Link from "next/link";
 import { signInWithEmailAndPassword } from "firebase/auth";
 // import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firbase";
-import { notification } from "antd";
+import { Button, notification } from "antd";
 import { useRouter } from "next/navigation";
 import {
   useReducer,
@@ -42,6 +42,7 @@ function reducer(
 const Page = () => {
   const [state, dispatch] = useReducer(reducer, initialUserState);
   const [passwordErr, setPasswordErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -49,6 +50,7 @@ const Page = () => {
   //   useCreateUserWithEmailAndPassword(auth);
 
   const handleLoginAccount = async () => {
+    setLoading(true);
     if (state.password.length < 8) {
       setPasswordErr("Password Should not be less than 8");
       console.log(passwordErr);
@@ -74,6 +76,7 @@ const Page = () => {
       }
       setPasswordErr("");
     }
+    setLoading(false);
   };
 
   return (
@@ -121,15 +124,16 @@ const Page = () => {
             placeholder="Enter Correct Password"
             error={passwordErr}
           />
-          <button
+          <Button
+            loading={loading}
             onClick={handleLoginAccount}
-            className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#BEADFF] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
+            className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#04357c] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#04357c] !m-0"
           >
             Login Account
-          </button>
+          </Button>
           <p className="text-[16px] text-[#737373]">
             Dont have an account?
-            <Link href="/create-account" className="text-[#633CFF]">
+            <Link href="/create-account" className="text-[#04357c]">
               Create account
             </Link>
           </p>
