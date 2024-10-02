@@ -1,13 +1,17 @@
 "use client";
 
 import { Button } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SingleLink from "../components/singleLink";
 import EmptyLink from "../components/emptyLink";
 import { FormEvent } from "react";
+import { db } from "@/firebase/firbase";
+import { getDocs, collection } from "firebase/firestore";
+
+export const linkCollectionRef = collection(db, "links");
 
 export interface Link {
-  platform: { platform: string; color: string; icon: any };
+  platform: string;
   url: string;
   error: string;
 }
@@ -15,11 +19,17 @@ export interface Link {
 const LinkContainer = () => {
   const [links, setLinks] = useState<Link[]>([]);
 
+  const getLinks = async () => {
+    try {
+      const data = await getDocs(linkCollectionRef);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const addNewLink = () => {
-    setLinks([
-      ...links,
-      { platform: { platform: "", color: "", icon: null }, url: "", error: "" },
-    ]);
+    setLinks([...links, { platform: "Github", url: "", error: "" }]);
   };
   const removeLink = (index: number) => {
     const newLink = [...links];
@@ -38,15 +48,16 @@ const LinkContainer = () => {
     console.log(links);
   };
 
-  const handleUpdatePlatform = (
-    index: number,
-    value: { platform: string; color: string; icon: any }
-  ) => {
+  const handleUpdatePlatform = (index: number, value: string) => {
     const newLinks = [...links];
     newLinks[index].platform = value;
     setLinks(newLinks);
     console.log(links);
   };
+
+  useEffect(() => {
+    getLinks();
+  }, []);
   // console.log(links);
   return (
     <div className="w-full p-[40px] rounded-xl bg-white">
@@ -60,7 +71,7 @@ const LinkContainer = () => {
         </p>
         <Button
           onClick={() => addNewLink()}
-          className="!h-[46px] !w-full text-[16px] !font-semibold !text-[#04357c] !bg-white border !border-[#04357c] hover:!bg-[#EFEBFF]  !m-0"
+          className="!h-[46px] !w-full text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0"
         >
           + Add new link
         </Button>
@@ -88,7 +99,7 @@ const LinkContainer = () => {
         <div className="w-full p-6 border-t flex justify-end align-center">
           <button
             type="submit"
-            className="w-[91px] h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#04357c] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#04357c] m-0"
+            className="w-[91px] h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#633CFF] m-0"
             disabled
           >
             Save

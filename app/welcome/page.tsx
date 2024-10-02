@@ -21,7 +21,7 @@ const WelcomeScreen = () => {
       </div>
       <div className="flex justify-center items-center">
         <Link href="/create-account">
-          <Button className="group w-[400px] ease-out duration-1000 !h-[52px] text-[18px] rounded-xl !font-semibold !text-white !bg-[#04357c] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#04357c] !m-0 hover:gap-2">
+          <Button className="group w-[400px] ease-out duration-1000 !h-[52px] text-[18px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#633CFF] !m-0 hover:gap-2">
             Get Started{" "}
             <FaCircleArrowRight
               size={22}

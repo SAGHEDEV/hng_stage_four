@@ -12,10 +12,7 @@ interface SingleLinkProp {
   index: number;
   removeLink: (index: number) => void;
   handleUpadteUrl: (inded: number, value: string) => void;
-  handleUpdatePlatform: (
-    index: number,
-    value: { platform: string; color: string; icon: any }
-  ) => void;
+  handleUpdatePlatform: (index: number, value: string) => void;
 }
 
 const SingleLink = (props: SingleLinkProp) => {
@@ -27,23 +24,7 @@ const SingleLink = (props: SingleLinkProp) => {
     props.handleUpadteUrl(props.index, linkd);
   }, [setLinkd, linkd]);
 
-  const platData = [
-    {
-      platform: "Github",
-      color: "black",
-      icon: TbBrandGithubFilled,
-    },
-    {
-      platform: "Youtube",
-      color: "red",
-      icon: FaYoutube,
-    },
-    {
-      platform: "Facebook",
-      color: "blue",
-      icon: FaFacebook,
-    },
-  ];
+  const platData = ["Facebook", "Github", "Youtube", "LinkedIn", "Twitter"];
 
   return (
     <div className="p-5 rounded-xl bg-[#FAFAFA] flex flex-col justify-center items-center">

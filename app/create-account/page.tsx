@@ -140,13 +140,13 @@ const SignUpPage = () => {
           <Button
             loading={loading}
             onClick={handleCreateAccount}
-            className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#04357c] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#04357c] !m-0"
+            className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
           >
             Create New Account
           </Button>
           <p className="text-sm text-[#737373]">
-            Already have an account?
-            <Link href="/login" className="text-[#04357c]">
+            Already have an account?{" "}
+            <Link href="/login" className="text-[#633CFF]">
               Login account
             </Link>
           </p>
