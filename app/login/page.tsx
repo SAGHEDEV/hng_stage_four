@@ -5,7 +5,11 @@ import { InputEmail, InputPassword } from "./../components/Input";
 import { CgMail } from "react-icons/cg";
 import { BiSolidLock } from "react-icons/bi";
 import Link from "next/link";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  setPersistence,
+  signInWithEmailAndPassword,
+  browserSessionPersistence,
+} from "firebase/auth";
 // import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firbase";
 import { Button, notification } from "antd";
@@ -39,34 +43,31 @@ const Page = () => {
 
   const router = useRouter();
 
-  // const [createUserWithEmailAndPassword] =
-  //   useCreateUserWithEmailAndPassword(auth);
-
   const handleLoginAccount = async () => {
     setLoading(true);
     if (state.password.length < 8) {
       setPasswordErr("Password Should not be less than 8");
       console.log(passwordErr);
     } else {
-      try {
-        await signInWithEmailAndPassword(
-          auth,
-          state.email,
-          state.password
-        ).then(() => {
-          notification.success({
-            message: `Login Successfull`,
-            description: `You can now create and share your link as you wish!`,
+      await setPersistence(auth, browserSessionPersistence).then(() => {
+        try {
+          signInWithEmailAndPassword(auth, state.email, state.password).then(
+            () => {
+              notification.success({
+                message: `Login Successfull`,
+                description: `You can now create and share your link as you wish!`,
+              });
+              router.push("/");
+            }
+          );
+        } catch (e: any | { error?: { code: number; message: string } }) {
+          console.log(e);
+          notification.error({
+            message: `Error ${e?.error?.code}!`,
+            description: `${e?.error?.message}, Kindly recheck details!`,
           });
-          router.push("/");
-        });
-      } catch (e: any | { error?: { code: number; message: string } }) {
-        console.log(e);
-        notification.error({
-          message: `Error ${e?.error?.code}!`,
-          description: `${e?.error?.message}, Kindly recheck details!`,
-        });
-      }
+        }
+      });
       setPasswordErr("");
     }
     setLoading(false);

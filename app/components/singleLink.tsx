@@ -55,6 +55,15 @@ const SingleLink = (props: SingleLinkProp) => {
             setLinkd(e.target.value);
           }}
         />
+        <div className="w-full p-2 border-t flex justify-end align-center">
+          <button
+            
+            className="w-full h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#633CFF] m-0"
+            disabled
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>
   );

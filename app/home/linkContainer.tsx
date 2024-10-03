@@ -6,7 +6,9 @@ import SingleLink from "../components/singleLink";
 import EmptyLink from "../components/emptyLink";
 import { FormEvent } from "react";
 import { db } from "@/firebase/firbase";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, addDoc } from "firebase/firestore";
+import { useLocalStorage } from "../hooks/localStorage";
+import { auth } from "@/firebase/firbase";
 
 export const linkCollectionRef = collection(db, "links");
 
@@ -18,11 +20,30 @@ export interface Link {
 
 const LinkContainer = () => {
   const [links, setLinks] = useState<Link[]>([]);
+  const { setItem } = useLocalStorage();
 
   const getLinks = async () => {
     try {
-      const data = await getDocs(linkCollectionRef);
-      console.log(data);
+      await getDocs(linkCollectionRef).then((docs) => {
+        const documents = docs.docs.map((doc) => ({
+          id: doc.id, // Document ID
+          ...doc.data(), // Document data
+        }));
+        console.log(documents);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleCreateNewLink = async (newLink: any) => {
+    try {
+      await addDoc(linkCollectionRef, {
+        platform: newLink?.platform,
+        url: newLink?.url,
+        createdBy: auth.currentUser?.uid,
+      }).then((res) => {
+        console.log(res);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -30,6 +51,8 @@ const LinkContainer = () => {
 
   const addNewLink = () => {
     setLinks([...links, { platform: "Github", url: "", error: "" }]);
+    handleCreateNewLink({ platform: "", url: "" });
+    getLinks();
   };
   const removeLink = (index: number) => {
     const newLink = [...links];
@@ -56,9 +79,14 @@ const LinkContainer = () => {
   };
 
   useEffect(() => {
+    setItem("links", links);
+  }, [links]);
+
+  useEffect(() => {
     getLinks();
   }, []);
   // console.log(links);
+
   return (
     <div className="w-full p-[40px] rounded-xl bg-white">
       <div className="w-full">
@@ -86,7 +114,7 @@ const LinkContainer = () => {
           ) : (
             links.map((link: Link, index: number) => (
               <SingleLink
-                key={link.url}
+                key={index}
                 link={link}
                 index={index}
                 removeLink={removeLink}
@@ -96,7 +124,7 @@ const LinkContainer = () => {
             ))
           )}
         </div>
-        <div className="w-full p-6 border-t flex justify-end align-center">
+        {/* <div className="w-full p-6 border-t flex justify-end align-center">
           <button
             type="submit"
             className="w-[91px] h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#633CFF] m-0"
@@ -104,7 +132,7 @@ const LinkContainer = () => {
           >
             Save
           </button>
-        </div>
+        </div> */}
       </form>
     </div>
   );

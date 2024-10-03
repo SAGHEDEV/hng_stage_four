@@ -9,6 +9,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/firbase";
 import { Button, notification } from "antd";
 import { useReducer, ChangeEvent, FormEvent, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
 
 const initialUserState = {
@@ -37,12 +38,12 @@ const SignUpPage = () => {
   const [state, dispatch] = useReducer(reducer, initialUserState);
   const [passwordErr, setPasswordErr] = useState("");
   const [confirmErr, setConfirmErr] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const router = useRouter();
 
   const handleCreateAccount = async () => {
-    setLoading(true);
+    setButtonLoading(true);
     if (
       state.password !== state.confirm_password &&
       state.confirm_password !== ""
@@ -79,8 +80,22 @@ const SignUpPage = () => {
       setPasswordErr("");
       setConfirmErr("");
     }
-    setLoading(false);
+    setButtonLoading(false);
   };
+
+  // useAuthState returns [user, loading, error]
+  const [user, loading] = useAuthState(auth);
+
+  // Handle loading state: Wait for Firebase to check the user's session
+  if (loading) {
+    return <p>Loading...</p>; // You can replace this with a loading spinner or animation
+  }
+
+  // Redirect to home if user is logged in
+  if (user) {
+    router.push("/");
+    // return null; // Prevent further rendering while redirecting
+  }
 
   return (
     <div className="w-full md:flex md:h-screen justify-center items-center flex-col gap-[45px] p-[32px] py-6">
@@ -138,9 +153,9 @@ const SignUpPage = () => {
             error={confirmErr}
           />
           <Button
-            loading={loading}
+            loading={buttonLoading}
             onClick={handleCreateAccount}
-            className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
+            className="w-full  !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
           >
             Create New Account
           </Button>
