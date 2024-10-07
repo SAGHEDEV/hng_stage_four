@@ -76,30 +76,30 @@ export const handleGetRightIconColor = (platform: string) => {
   }
 };
 
-export const handleConfirm = ({
-  data,
-  title,
-  action,
-  buttonText,
-  description,
-}: HandleConfirmProps) => {
-  const onClose = Modal.destroyAll();
+// export const handleConfirm = ({
+//   data,
+//   title,
+//   action,
+//   buttonText,
+//   description,
+// }: HandleConfirmProps) => {
+//   const onClose = Modal.destroyAll();
 
-  const handleAction = () => {
-    action?.(data);
-    Modal.destroyAll();
-  };
+//   const handleAction = () => {
+//     action?.(data);
+//     Modal.destroyAll();
+//   };
 
-  Modal.confirm({
-    icon: null,
-    closeIcon: false,
-    maskClosable: true,
-    title: title || "Delete from Table!",
-    className:
-      "md:!w-[500px] !rounded-lg !min-h-[350px] !relative !px-10 !py-4 !flex !flex-col !justify-center !items-center text-center",
-    content: description || "Are you sure to delete this item?",
-    onOk: handleAction,
-    onCancel: onClose,
-    okText: buttonText || "Delete from table",
-  });
-};
+//   Modal.confirm({
+//     icon: null,
+//     closeIcon: false,
+//     maskClosable: true,
+//     title: title || "Delete from Table!",
+//     className:
+//       "md:!w-[500px] !rounded-lg !min-h-[350px] !relative !px-10 !py-4 !flex !flex-col !justify-center !items-center text-center",
+//     content: description || "Are you sure to delete this item?",
+//     onOk: handleAction,
+//     onCancel: onClose,
+//     okText: buttonText || "Delete from table",
+//   });
+// };

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { LinkType, InputLink } from "./Input";
 import { ChangeEvent } from "react";
 import { Link } from "../home/linkContainer";
-import { handleConfirm } from "../hooks/handleFrame";
+// import { handleConfirm } from "../hooks/handleFrame";
 
 interface SingleLinkProp {
   link: Link;
@@ -32,21 +32,7 @@ const SingleLink = (props: SingleLinkProp) => {
     <div className="p-5 rounded-xl bg-[#FAFAFA] flex flex-col justify-center items-center">
       <span className="w-full flex justify-between items-center text-[16px] text-[#737373]">
         <span className="font-bold">Link #{props.index + 1}</span>
-        <span
-          className="cursor-pointer"
-          onClick={() =>
-            handleConfirm({
-              data: props.link.id,
-              action: props.handleRemoveLink,
-              title: "ADelete this Link?",
-              buttonText: "Delete Link",
-              description:
-                "Are you sure to delete this Link from your link collection?",
-            })
-          }
-        >
-          Remove
-        </span>
+        <span className="cursor-pointer">Remove</span>
       </span>
 
       <div className="py-3 w-full flex flex-col gap-3">
