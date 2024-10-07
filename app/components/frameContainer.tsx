@@ -1,9 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { db } from "@/firebase/firbase";
+import { getDocs, collection } from "firebase/firestore";
+import { auth } from "@/firebase/firbase";
+import { handleGetRightIconColor } from "../hooks/handleFrame";
 
 const FrameContainer = () => {
+  const linkCollectionRef = collection(
+    db,
+    "users",
+    auth?.currentUser?.uid as string,
+    "links"
+  );
+  const [links, setLinks] = useState<any>([]);
+
+  const handleGetAllLinks = async () => {
+    try {
+      await getDocs(linkCollectionRef).then((docs) => {
+        const documents = docs.docs.map((doc) => ({
+          id: doc.id, // Document ID
+          ...doc.data(), // Document data
+        }));
+        setLinks(documents);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // console.log(links);
+  useEffect(() => {
+    handleGetAllLinks();
+  });
   return (
-    <div className="hidden lg:block bg-white rounded-2xl p-20">
+    <div className="hidden lg:block bg-white rounded-2xl p-20 sticky top-0">
       <div className="!w-[307px] !h-[631px] relative">
         <Image
           src="/rectangle-main.png"
@@ -20,6 +50,25 @@ const FrameContainer = () => {
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
           "
         />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-[631px] flex justify-start items-center flex-col gap-16 p-10 pt-16 ">
+          <div className="!w-28 !h-28 rounded-full bg-gray-300 animate-pulse"></div>
+          <div className="flex flex-col justify-start items-center gap-5 w-full ">
+            {links.map((link: any) => {
+              const { color, icon: Icon } = handleGetRightIconColor(
+                link.platform
+              );
+              return (
+                <div
+                  key={link?.id}
+                  className={`w-full h-[40px] rounded-lg flex justify-start items-center px-5 text-white`}
+                  style={{ backgroundColor: color }}
+                >
+                  <Icon /> <span className="ml-3 text-sm">{link.platform}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

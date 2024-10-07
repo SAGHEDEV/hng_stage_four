@@ -15,6 +15,9 @@ import { auth } from "@/firebase/firbase";
 import { Button, notification } from "antd";
 import { useRouter } from "next/navigation";
 import { useReducer, ChangeEvent, FormEvent, useState } from "react";
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "@/firebase/firbase";
+import { SuiteContext } from "node:test";
 
 const initialUserState = {
   email: "",
@@ -45,31 +48,61 @@ const Page = () => {
 
   const handleLoginAccount = async () => {
     setLoading(true);
+
     if (state.password.length < 8) {
-      setPasswordErr("Password Should not be less than 8");
-      console.log(passwordErr);
+      setPasswordErr("Password should not be less than 8 characters.");
+      setLoading(false);
+      return;
     } else {
-      await setPersistence(auth, browserSessionPersistence).then(() => {
-        try {
-          signInWithEmailAndPassword(auth, state.email, state.password).then(
-            () => {
-              notification.success({
-                message: `Login Successfull`,
-                description: `You can now create and share your link as you wish!`,
-              });
-              router.push("/");
-            }
-          );
-        } catch (e: any | { error?: { code: number; message: string } }) {
-          console.log(e);
-          notification.error({
-            message: `Error ${e?.error?.code}!`,
-            description: `${e?.error?.message}, Kindly recheck details!`,
-          });
-        }
-      });
       setPasswordErr("");
     }
+
+    try {
+      // Set persistence for session login
+      await setPersistence(auth, browserSessionPersistence);
+
+      // Attempt to sign in with email and password
+      const res = await signInWithEmailAndPassword(
+        auth,
+        state.email,
+        state.password
+      );
+
+      const uid = res.user.uid;
+      const userRef = doc(db, "users", uid);
+
+      // Prepare user data
+      const userData = {
+        email: res.user.email,
+        name: res.user.displayName || "Anonymous", // Fallback if displayName is null
+      };
+
+      // Add or update the user's document in Firestore
+      await setDoc(userRef, userData);
+
+      console.log("User document successfully created/updated!");
+
+      // Notification for successful login
+      notification.success({
+        message: `Login Successful`,
+        description: `You can now create and share your links as you wish!`,
+      });
+
+      // Redirect to the home page or dashboard
+      router.push("/");
+    } catch (error: any) {
+      // Handle any Firebase or Firestore-related errors
+      console.error("Error during login or Firestore operation: ", error);
+
+      // Display error notification with proper messaging
+      notification.error({
+        message: `Error ${error.code || "Unknown Error"}!`,
+        description: `${
+          error.message || "An error occurred, please try again."
+        }`,
+      });
+    }
+
     setLoading(false);
   };
 

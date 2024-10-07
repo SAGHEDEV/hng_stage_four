@@ -60,11 +60,7 @@ const SignUpPage = () => {
       console.log(passwordErr);
     } else {
       try {
-        const res = await createUserWithEmailAndPassword(
-          auth,
-          state.email,
-          state.password
-        );
+        await createUserWithEmailAndPassword(auth, state.email, state.password);
         notification.success({
           message: `Account Created Successfully`,
           description: `Navigating to Login page to log into your account`,

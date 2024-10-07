@@ -104,10 +104,9 @@ export const InputLink = (props: LinkProps) => {
         <input
           type="text"
           value={props.value}
-          onChange={(e) => props.onChange(e)}
+          onChange={props.onChange}
           placeholder="e.g. https://www.platform.com/johnappleseed"
           className="w-full pl-8 border-none bg-transparent focus:border-none focus:outline-none h-full"
-          required
         />
       </div>
     </div>

@@ -6,21 +6,35 @@ import SingleLink from "../components/singleLink";
 import EmptyLink from "../components/emptyLink";
 import { FormEvent } from "react";
 import { db } from "@/firebase/firbase";
-import { getDocs, collection, addDoc } from "firebase/firestore";
+import {
+  getDocs,
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  writeBatch,
+  deleteDoc,
+} from "firebase/firestore";
 import { useLocalStorage } from "../hooks/localStorage";
 import { auth } from "@/firebase/firbase";
-
-export const linkCollectionRef = collection(db, "links");
 
 export interface Link {
   platform: string;
   url: string;
-  error: string;
+  id: string;
 }
 
 const LinkContainer = () => {
-  const [links, setLinks] = useState<Link[]>([]);
+  const [links, setLinks] = useState<any>([]);
   const { setItem } = useLocalStorage();
+  const [saveLoading, setSaveLoading] = useState(false);
+  // const userReference = doc(db, "user", auth?.currentUser?.uid as string);
+  const linkCollectionRef = collection(
+    db,
+    "users",
+    auth?.currentUser?.uid as string,
+    "links"
+  );
 
   const getLinks = async () => {
     try {
@@ -29,7 +43,7 @@ const LinkContainer = () => {
           id: doc.id, // Document ID
           ...doc.data(), // Document data
         }));
-        console.log(documents);
+        setLinks(documents);
       });
     } catch (error) {
       console.log(error);
@@ -40,7 +54,6 @@ const LinkContainer = () => {
       await addDoc(linkCollectionRef, {
         platform: newLink?.platform,
         url: newLink?.url,
-        createdBy: auth.currentUser?.uid,
       }).then((res) => {
         console.log(res);
       });
@@ -50,14 +63,24 @@ const LinkContainer = () => {
   };
 
   const addNewLink = () => {
-    setLinks([...links, { platform: "Github", url: "", error: "" }]);
-    handleCreateNewLink({ platform: "", url: "" });
+    setLinks([...links, { platform: "Github", url: "", id: "" }]);
+    handleCreateNewLink({ platform: "Github", url: "", id: "" });
     getLinks();
   };
-  const removeLink = (index: number) => {
-    const newLink = [...links];
-    newLink.splice(index, 1);
-    setLinks(newLink);
+  const handleRemoveLink = async (id: string) => {
+    const docRef = doc(
+      db,
+      "users",
+      auth?.currentUser?.uid as string,
+      "links",
+      id
+    );
+    try {
+      await deleteDoc(docRef);
+      getLinks();
+    } catch (e: any) {
+      console.log(e);
+    }
   };
 
   const handleUpadteUrl = (index: number, value: string) => {
@@ -68,14 +91,77 @@ const LinkContainer = () => {
       url: value, // Update the specific field dynamically
     };
     setLinks(newLinks);
-    console.log(links);
   };
 
   const handleUpdatePlatform = (index: number, value: string) => {
     const newLinks = [...links];
     newLinks[index].platform = value;
     setLinks(newLinks);
-    console.log(links);
+  };
+
+  const handleSaveSingleLink = async (id: string, index: number) => {
+    const url_value = links[index].url;
+    if (url_value === "" || !url_value) {
+      console.log("url is empty");
+    } else {
+      const docRef = doc(
+        db,
+        "users",
+        auth?.currentUser?.uid as string,
+        "links",
+        id
+      );
+      await updateDoc(docRef, {
+        ...links[index],
+      });
+      console.log("updated");
+    }
+  };
+
+  const handleBatchUpdateLinks = async () => {
+    setSaveLoading(true);
+    const batch = writeBatch(db); // Create a new write batch
+    let isValid = true; // Flag to check if all links are valid
+
+    // Iterate through each link and validate before adding to the batch
+    links.forEach((link: any, index: number) => {
+      const id = link.id; // Assuming each link has a unique ID
+      const url_value = link.url;
+
+      // Check if the URL is empty or invalid
+      if (url_value === "" || !url_value) {
+        console.log(
+          `Link at index ${index} has an empty URL. Aborting batch update.`
+        );
+        isValid = false; // Mark as invalid
+      } else {
+        const docRef = doc(
+          db,
+          "users",
+          auth?.currentUser?.uid as string,
+          "links",
+          id
+        );
+
+        // Add the update operation to the batch
+        batch.update(docRef, {
+          ...link,
+        });
+      }
+    });
+
+    // If all links are valid, commit the batch
+    if (isValid) {
+      try {
+        await batch.commit();
+        console.log("Batch update completed successfully.");
+      } catch (error) {
+        console.error("Error during batch update: ", error);
+      }
+    } else {
+      console.log("Batch update aborted due to invalid data.");
+    }
+    setSaveLoading(false);
   };
 
   useEffect(() => {
@@ -85,7 +171,6 @@ const LinkContainer = () => {
   useEffect(() => {
     getLinks();
   }, []);
-  // console.log(links);
 
   return (
     <div className="w-full p-[40px] rounded-xl bg-white">
@@ -117,22 +202,24 @@ const LinkContainer = () => {
                 key={index}
                 link={link}
                 index={index}
-                removeLink={removeLink}
+                handleRemoveLink={handleRemoveLink}
                 handleUpadteUrl={handleUpadteUrl}
                 handleUpdatePlatform={handleUpdatePlatform}
+                handleSaveSingleLink={handleSaveSingleLink}
               />
             ))
           )}
         </div>
-        {/* <div className="w-full p-6 border-t flex justify-end align-center">
-          <button
-            type="submit"
-            className="w-[91px] h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#633CFF] m-0"
-            disabled
+        <div className="w-full p-6 border-t flex justify-end align-center">
+          <Button
+            loading={saveLoading}
+            className="!w-[91px] !h-[46px] text-[16px] rounded-xl font-semibold !text-white !bg-[#633CFF] hover:!border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:!shadow-[#633CFF] !m-0"
+            onClick={handleBatchUpdateLinks}
+            disabled={!links}
           >
             Save
-          </button>
-        </div> */}
+          </Button>
+        </div>
       </form>
     </div>
   );

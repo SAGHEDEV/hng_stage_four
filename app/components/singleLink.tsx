@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { LinkType, InputLink } from "./Input";
-import { TbBrandGithubFilled } from "react-icons/tb";
-import { FaYoutube, FaFacebook } from "react-icons/fa";
 import { ChangeEvent } from "react";
 import { Link } from "../home/linkContainer";
+import { handleConfirm } from "../hooks/handleFrame";
 
 interface SingleLinkProp {
   link: Link;
   index: number;
-  removeLink: (index: number) => void;
+  handleRemoveLink: (id: string) => void;
   handleUpadteUrl: (inded: number, value: string) => void;
   handleUpdatePlatform: (index: number, value: string) => void;
+  handleSaveSingleLink: (id: string, index: number) => void;
 }
 
 const SingleLink = (props: SingleLinkProp) => {
@@ -22,7 +22,9 @@ const SingleLink = (props: SingleLinkProp) => {
 
   useEffect(() => {
     props.handleUpadteUrl(props.index, linkd);
-  }, [setLinkd, linkd]);
+  }, [linkd]);
+
+  // console.log(props.link);
 
   const platData = ["Facebook", "Github", "Youtube", "LinkedIn", "Twitter"];
 
@@ -32,7 +34,16 @@ const SingleLink = (props: SingleLinkProp) => {
         <span className="font-bold">Link #{props.index + 1}</span>
         <span
           className="cursor-pointer"
-          onClick={() => props.removeLink(props.index)}
+          onClick={() =>
+            handleConfirm({
+              data: props.link.id,
+              action: props.handleRemoveLink,
+              title: "ADelete this Link?",
+              buttonText: "Delete Link",
+              description:
+                "Are you sure to delete this Link from your link collection?",
+            })
+          }
         >
           Remove
         </span>
@@ -51,19 +62,20 @@ const SingleLink = (props: SingleLinkProp) => {
         <InputLink
           value={linkd}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            e.preventDefault();
+            // e.preventDefault();
             setLinkd(e.target.value);
           }}
         />
-        <div className="w-full p-2 border-t flex justify-end align-center">
+        {/* <div className="w-full p-2 border-t flex justify-end align-center">
           <button
-            
-            className="w-full h-[46px] text-[16px] rounded-xl font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#633CFF] m-0"
-            disabled
+            onClick={() =>
+              props.handleSaveSingleLink(props.link.id, props.index)
+            }
+            className="w-full h-[46px] text-[16px] rounded-xl cursor-pointer font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#633CFF] m-0"
           >
             Save
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
