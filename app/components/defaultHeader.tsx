@@ -17,7 +17,7 @@ const DefaultHeader = () => {
       icon: RiLinksFill,
     },
     {
-      key: "/",
+      key: "#",
       label: "Profile Details",
       icon: CgProfile,
     },

@@ -30,10 +30,10 @@ const FrameContainer = () => {
     }
   };
 
-  // console.log(links);
+  // console.log(links.length !== 0);
   useEffect(() => {
     handleGetAllLinks();
-  });
+  }, []);
   return (
     <div className="hidden lg:block bg-white rounded-2xl p-20 sticky top-0">
       <div className="!w-[307px] !h-[631px] relative">
@@ -55,20 +55,30 @@ const FrameContainer = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-[631px] flex justify-start items-center flex-col gap-16 p-10 pt-16 ">
           <div className="!w-28 !h-28 rounded-full bg-gray-300 animate-pulse"></div>
           <div className="flex flex-col justify-start items-center gap-5 w-full ">
-            {links.map((link: any) => {
-              const { color, icon: Icon } = handleGetRightIconColor(
-                link.platform
-              );
-              return (
-                <div
-                  key={link?.id}
-                  className={`w-full h-[40px] rounded-lg flex justify-start items-center px-5 text-white`}
-                  style={{ backgroundColor: color }}
-                >
-                  <Icon /> <span className="ml-3 text-sm">{link.platform}</span>
-                </div>
-              );
-            })}
+            {links.length !== 0
+              ? links.map((link: any) => {
+                  const { color, icon: Icon } = handleGetRightIconColor(
+                    link.platform
+                  );
+                  return (
+                    <div
+                      key={link?.id}
+                      className={`w-full h-[40px] rounded-lg flex justify-start items-center px-5 text-white`}
+                      style={{ backgroundColor: color }}
+                    >
+                      <Icon />{" "}
+                      <span className="ml-3 text-sm">{link.platform}</span>
+                    </div>
+                  );
+                })
+              : Array(5).map((index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="w-full h-[40px] rounded-lg flex justify-start items-center px-5 bg-gray/60 animation:pulse"
+                    ></div>
+                  );
+                })}
           </div>
         </div>
       </div>

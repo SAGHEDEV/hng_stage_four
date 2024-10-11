@@ -118,10 +118,32 @@ const LinkContainer = () => {
     }
   };
 
+  const findDuplicatePlatforms = (links: Link[]): string[] => {
+    const platformSet = new Set<string>(); // To track unique platforms
+    const duplicates: string[] = []; // To store duplicated platforms
+
+    for (const link of links) {
+      if (platformSet.has(link.platform)) {
+        // If platform already exists, add to duplicates array if it's not already there
+        if (!duplicates.includes(link.platform)) {
+          duplicates.push(link.platform);
+        }
+      } else {
+        platformSet.add(link.platform); // Add the platform if it's unique
+      }
+    }
+
+    return duplicates; // Return array of duplicates (empty if no duplicates found)
+  };
+
   const handleBatchUpdateLinks = async () => {
     setSaveLoading(true);
     const batch = writeBatch(db); // Create a new write batch
     let isValid = true; // Flag to check if all links are valid
+
+    const duplicates = findDuplicatePlatforms(links);
+
+    console.log(duplicates);
 
     // Iterate through each link and validate before adding to the batch
     links.forEach((link: any, index: number) => {
@@ -215,7 +237,7 @@ const LinkContainer = () => {
             loading={saveLoading}
             className="!w-[91px] !h-[46px] text-[16px] rounded-xl font-semibold !text-white !bg-[#633CFF] hover:!border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:!shadow-[#633CFF] !m-0"
             onClick={handleBatchUpdateLinks}
-            disabled={!links}
+            disabled={links.length === 0}
           >
             Save
           </Button>
