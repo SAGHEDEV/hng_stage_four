@@ -12,7 +12,6 @@ interface SingleLinkProp {
   handleRemoveLink: (id: string) => void;
   handleUpadteUrl: (inded: number, value: string) => void;
   handleUpdatePlatform: (index: number, value: string) => void;
-  handleSaveSingleLink: (id: string, index: number) => void;
 }
 
 const SingleLink = (props: SingleLinkProp) => {
@@ -26,13 +25,16 @@ const SingleLink = (props: SingleLinkProp) => {
 
   // console.log(props.link);
 
-  const platData = ["Facebook", "Github", "Youtube", "LinkedIn", "Twitter"];
-
   return (
     <div className="p-5 rounded-xl bg-[#FAFAFA] flex flex-col justify-center items-center">
       <span className="w-full flex justify-between items-center text-[16px] text-[#737373]">
         <span className="font-bold">Link #{props.index + 1}</span>
-        <span className="cursor-pointer">Remove</span>
+        <span
+          onClick={() => props.handleRemoveLink(props.link.id)}
+          className="cursor-pointer"
+        >
+          Remove
+        </span>
       </span>
 
       <div className="py-3 w-full flex flex-col gap-3">
@@ -40,7 +42,6 @@ const SingleLink = (props: SingleLinkProp) => {
           index={props.index}
           setOpen={setOptionOpen}
           isOpen={optionOpen}
-          platData={platData}
           currentPlat={currentPlat}
           setCurrentPlat={setCurrentPlat}
           onChange={props.handleUpdatePlatform}

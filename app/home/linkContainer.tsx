@@ -1,15 +1,18 @@
 "use client";
 
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import { useState, useEffect } from "react";
 import SingleLink from "../components/singleLink";
 import EmptyLink from "../components/emptyLink";
 import { FormEvent } from "react";
 import { db } from "@/firebase/firbase";
+import FrameContainer from "../components/frameContainer";
 import {
   getDocs,
   collection,
   addDoc,
+  getDoc,
+  setDoc,
   updateDoc,
   doc,
   writeBatch,
@@ -17,6 +20,7 @@ import {
 } from "firebase/firestore";
 import { useLocalStorage } from "../hooks/localStorage";
 import { auth } from "@/firebase/firbase";
+import { handleVerifyUrl } from "../hooks/handleFrame";
 
 export interface Link {
   platform: string;
@@ -28,6 +32,7 @@ const LinkContainer = () => {
   const [links, setLinks] = useState<any>([]);
   const { setItem } = useLocalStorage();
   const [saveLoading, setSaveLoading] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
   // const userReference = doc(db, "user", auth?.currentUser?.uid as string);
   const linkCollectionRef = collection(
     db,
@@ -49,23 +54,9 @@ const LinkContainer = () => {
       console.log(error);
     }
   };
-  const handleCreateNewLink = async (newLink: any) => {
-    try {
-      await addDoc(linkCollectionRef, {
-        platform: newLink?.platform,
-        url: newLink?.url,
-      }).then((res) => {
-        console.log(res);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const addNewLink = () => {
-    setLinks([...links, { platform: "Github", url: "", id: "" }]);
-    handleCreateNewLink({ platform: "Github", url: "", id: "" });
-    getLinks();
+    setLinks([...links, { platform: "Github", url: "" }]);
   };
   const handleRemoveLink = async (id: string) => {
     const docRef = doc(
@@ -81,6 +72,9 @@ const LinkContainer = () => {
     } catch (e: any) {
       console.log(e);
     }
+    api.success({
+      message: "Link has been removed successfully!!",
+    });
   };
 
   const handleUpadteUrl = (index: number, value: string) => {
@@ -97,25 +91,6 @@ const LinkContainer = () => {
     const newLinks = [...links];
     newLinks[index].platform = value;
     setLinks(newLinks);
-  };
-
-  const handleSaveSingleLink = async (id: string, index: number) => {
-    const url_value = links[index].url;
-    if (url_value === "" || !url_value) {
-      console.log("url is empty");
-    } else {
-      const docRef = doc(
-        db,
-        "users",
-        auth?.currentUser?.uid as string,
-        "links",
-        id
-      );
-      await updateDoc(docRef, {
-        ...links[index],
-      });
-      console.log("updated");
-    }
   };
 
   const findDuplicatePlatforms = (links: Link[]): string[] => {
@@ -139,24 +114,56 @@ const LinkContainer = () => {
   const handleBatchUpdateLinks = async () => {
     setSaveLoading(true);
     const batch = writeBatch(db); // Create a new write batch
-    let isValid = true; // Flag to check if all links are valid
 
     const duplicates = findDuplicatePlatforms(links);
 
-    console.log(duplicates);
+    try {
+      for (let index = 0; index < links.length; index++) {
+        const link = links[index];
+        const id = link.id || `${link.platform}${index}`; // Assuming each link has a unique ID
+        const url_value = link.url;
 
-    // Iterate through each link and validate before adding to the batch
-    links.forEach((link: any, index: number) => {
-      const id = link.id; // Assuming each link has a unique ID
-      const url_value = link.url;
+        // Check if user is authenticated and user ID is available
+        if (!auth?.currentUser?.uid) {
+          api.error({
+            message: "User is not authenticated. Aborting batch update.",
+          });
+          return;
+        }
 
-      // Check if the URL is empty or invalid
-      if (url_value === "" || !url_value) {
-        console.log(
-          `Link at index ${index} has an empty URL. Aborting batch update.`
-        );
-        isValid = false; // Mark as invalid
-      } else {
+        // Check if the URL is empty or invalid
+        if (url_value === "" || !url_value) {
+          api.error({
+            message: `Link ${
+              index + 1
+            } has an empty URL. Aborting batch update.`,
+          });
+          return; // Abort on error
+        }
+
+        if (duplicates.length !== 0) {
+          api.error({
+            message: "A duplicate platform has been detected, kindly confirm!",
+          });
+          return; // Abort on error
+        }
+
+        if (!handleVerifyUrl(url_value)) {
+          api.error({
+            message: `Kindly confirm the link attached to ${link?.platform}`,
+          });
+          return; // Abort on error
+        }
+
+        // Check if id is valid before creating document reference
+        if (!id || typeof id !== "string") {
+          api.error({
+            message: `Invalid document ID for link at index ${index}. Aborting batch update.`,
+          });
+          return; // Abort on error
+        }
+
+        // Create the Firestore document reference
         const docRef = doc(
           db,
           "users",
@@ -165,25 +172,23 @@ const LinkContainer = () => {
           id
         );
 
-        // Add the update operation to the batch
-        batch.update(docRef, {
-          ...link,
-        });
+        // Use set with merge: true to avoid updating non-existing documents
+        batch.set(docRef, { ...link }, { merge: true });
       }
-    });
 
-    // If all links are valid, commit the batch
-    if (isValid) {
-      try {
-        await batch.commit();
-        console.log("Batch update completed successfully.");
-      } catch (error) {
-        console.error("Error during batch update: ", error);
-      }
-    } else {
-      console.log("Batch update aborted due to invalid data.");
+      // Commit the batch after processing all links
+      await batch.commit();
+      api.success({
+        message: "Successfully saved all links!",
+      });
+    } catch (error) {
+      api.error({
+        message: "An error occurred while saving the links.",
+      });
+      console.error("Batch error:", error);
+    } finally {
+      setSaveLoading(false);
     }
-    setSaveLoading(false);
   };
 
   useEffect(() => {
@@ -195,55 +200,58 @@ const LinkContainer = () => {
   }, []);
 
   return (
-    <div className="w-full p-[40px] rounded-xl bg-white">
-      <div className="w-full">
-        <h2 className="text-[32px] font-bold text-[#333333] mb-2">
-          Customize your links
-        </h2>
-        <p className="text-[16px] font-normal mb-10">
-          Add/edit/remove links below and then share all your profiles with the
-          world!
-        </p>
-        <Button
-          onClick={() => addNewLink()}
-          className="!h-[46px] !w-full text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0"
-        >
-          + Add new link
-        </Button>
-      </div>
-      <form
-        className="w-full"
-        onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
-      >
-        <div className="my-6 w-full flex flex-col gap-6">
-          {links.length === 0 ? (
-            <EmptyLink />
-          ) : (
-            links.map((link: Link, index: number) => (
-              <SingleLink
-                key={index}
-                link={link}
-                index={index}
-                handleRemoveLink={handleRemoveLink}
-                handleUpadteUrl={handleUpadteUrl}
-                handleUpdatePlatform={handleUpdatePlatform}
-                handleSaveSingleLink={handleSaveSingleLink}
-              />
-            ))
-          )}
-        </div>
-        <div className="w-full p-6 border-t flex justify-end align-center">
+    <main className="my-[24px] flex justify-between items-start gap-6">
+      {contextHolder}
+      <FrameContainer links={links} />
+      <div className="w-full p-[40px] rounded-xl bg-white">
+        <div className="w-full">
+          <h2 className="text-[32px] font-bold text-[#333333] mb-2">
+            Customize your links
+          </h2>
+          <p className="text-[16px] font-normal mb-10">
+            Add/edit/remove links below and then share all your profiles with
+            the world!
+          </p>
           <Button
-            loading={saveLoading}
-            className="!w-[91px] !h-[46px] text-[16px] rounded-xl font-semibold !text-white !bg-[#633CFF] hover:!border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:!shadow-[#633CFF] !m-0"
-            onClick={handleBatchUpdateLinks}
-            disabled={links.length === 0}
+            onClick={() => addNewLink()}
+            className="!h-[46px] !w-full text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0"
           >
-            Save
+            + Add new link
           </Button>
         </div>
-      </form>
-    </div>
+        <form
+          className="w-full"
+          onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
+        >
+          <div className="my-6 w-full flex flex-col gap-6">
+            {links.length === 0 ? (
+              <EmptyLink />
+            ) : (
+              links.map((link: Link, index: number) => (
+                <SingleLink
+                  key={index}
+                  link={link}
+                  index={index}
+                  handleRemoveLink={handleRemoveLink}
+                  handleUpadteUrl={handleUpadteUrl}
+                  handleUpdatePlatform={handleUpdatePlatform}
+                />
+              ))
+            )}
+          </div>
+          <div className="w-full p-6 border-t flex justify-end align-center">
+            <Button
+              loading={saveLoading}
+              className="!w-[91px] !h-[46px] text-[16px] rounded-xl font-semibold !text-white !bg-[#633CFF] hover:!border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:!shadow-[#633CFF] !m-0"
+              onClick={handleBatchUpdateLinks}
+              disabled={links.length === 0}
+            >
+              Save
+            </Button>
+          </div>
+        </form>
+      </div>
+    </main>
   );
 };
 

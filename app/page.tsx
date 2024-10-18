@@ -10,7 +10,6 @@ import Loading from "./components/loading";
 export default function Home() {
   // useAuthState returns [user, loading, error]
   const [user, loading] = useAuthState(auth);
-  console.log(user);
 
   const router = useRouter();
 
@@ -20,7 +19,7 @@ export default function Home() {
   }
 
   // Redirect to the signup page if no user is logged in
-  if (!user) {
+  if (!user && !loading) {
     router.push("/create-account");
     return null; // Prevent further rendering while redirecting
   }

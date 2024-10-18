@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Button } from "antd";
 import { FaCircleArrowRight } from "react-icons/fa6";
+import FrameContainer from "../components/frameContainer";
 
 const WelcomeScreen = () => {
   return (
     <div className="flex justify-center items-center h-[100vh] max-h-screen flex-col gap-7 overflow-hidden  ">
+      <FrameContainer />
       <div>
         <h1 className="text-center text-[60px] font-bold text-black">
           Welcome to{" "}

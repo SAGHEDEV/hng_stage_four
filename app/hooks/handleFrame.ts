@@ -20,7 +20,9 @@ interface HandleConfirmProps {
   description?: string;
 }
 
-const PlatformOutline: { [key: string]: { icon: IconType; color: string } } = {
+export const PlatformOutline: {
+  [key: string]: { icon: IconType; color: string };
+} = {
   facebook: {
     icon: FaFacebook,
     color: "#1877f2",
@@ -73,6 +75,14 @@ export const handleGetRightIconColor = (platform: string) => {
       icon: GrStatusUnknown,
       color: "#000000",
     };
+  }
+};
+export const handleVerifyUrl = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
   }
 };
 

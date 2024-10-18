@@ -17,7 +17,7 @@ const DefaultHeader = () => {
       icon: RiLinksFill,
     },
     {
-      key: "#",
+      key: "/profile",
       label: "Profile Details",
       icon: CgProfile,
     },
@@ -69,10 +69,11 @@ const DefaultHeader = () => {
             </Link>
           ))}
         </div>
-
-        <Button className="!h-[46px] !w-[52px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
-          <MdOutlineRemoveRedEye size={20} />
-        </Button>
+        <Link href="/share">
+          <Button className="!h-[46px] !w-[52px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
+            <MdOutlineRemoveRedEye size={20} />
+          </Button>
+        </Link>
       </div>
     </div>
   );
