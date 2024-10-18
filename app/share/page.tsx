@@ -12,8 +12,9 @@ import { handleGetRightIconColor } from "../hooks/handleFrame";
 import { handleVerifyUrl } from "../hooks/handleFrame";
 import { FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { useRouter } from "next/navigation";
+import { ApiError } from "next/dist/server/api-utils";
 
 const Page = () => {
   const [user, loading] = useAuthState(auth);
@@ -79,6 +80,10 @@ const Page = () => {
           <Button
             onClick={() => {
               console.log(window.location.href + `?id=${user.uid}`);
+              navigator.clipboard.writeText(
+                window.location.href + `?id=${user.uid}`
+              );
+              message.success("Link copied to clipboard!");
             }}
             className="!w-[91px] !h-[46px] text-[16px] rounded-xl font-semibold !text-white !bg-black hover:!border-none hover:!white hover:!shadow-md hover:!shadow-[#633CFF] !m-0"
           >
