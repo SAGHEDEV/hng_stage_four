@@ -15,7 +15,6 @@ import { FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
 import { Button, message } from "antd";
 import { useRouter } from "next/navigation";
-import { ApiError } from "next/dist/server/api-utils";
 
 const Page = () => {
   const [user, loading] = useAuthState(auth);
