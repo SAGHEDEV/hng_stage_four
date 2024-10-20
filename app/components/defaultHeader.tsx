@@ -46,10 +46,11 @@ const DefaultHeader = () => {
             </Link>
           ))}
         </div>
-
-        <Button className="!h-[46px] !w-[114px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
-          Preview
-        </Button>
+        <Link href="/share">
+          <Button className="!h-[46px] !w-[114px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
+            Preview
+          </Button>
+        </Link>
       </div>
 
       <div className="flex md:hidden w-full bg-white p-4 rounded-xl justify-between items-center">

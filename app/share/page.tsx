@@ -65,7 +65,7 @@ const Page = () => {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className="flex flex-col justify-center items-center w-full h-screen">
+      <div className="flex flex-col justify-center items-center w-full h-full min-h-screen py-16 px-4">
         <div className="absolute w-full h-52 bg-[#633CFF] rounded-b-3xl top-0"></div>
 
         {user && (
@@ -91,60 +91,62 @@ const Page = () => {
             </Button>
           </div>
         )}
-        <div className="z-10 !w-90% !min-w-[350px] md:w-[500px] h-fit rounded-3xl shadow-xl p-10 flex flex-col justify-center items-center gap-8 bg-white">
-          <Image
-            src={userData?.photoURL as string}
-            alt="Profile picture"
-            width={148}
-            height={148}
-            className="rounded-full shadow-sm"
-          />
+        <div className="py-16 z-10">
+          <div className="z-10 !w-90% !min-w-[350px] md:w-[500px] h-fit rounded-3xl shadow-xl p-10 flex flex-col justify-center items-center gap-8 bg-white">
+            <Image
+              src={userData?.photoURL as string}
+              alt="Profile picture"
+              width={148}
+              height={148}
+              className="rounded-full shadow-sm"
+            />
 
-          <p className="font-semibold text-xl text-center">
-            {userData?.displayName}
-          </p>
+            <p className="font-semibold text-xl text-center">
+              {userData?.displayName}
+            </p>
 
-          <div className="w-full flex justify-center items-center gap-3 flex-col max-h-[300px] overflow-auto">
-            {links?.length !== 0
-              ? links?.map((link: any) => {
-                  const { color, icon: Icon } = handleGetRightIconColor(
-                    link?.platform
-                  );
-                  return (
-                    <Link
-                      key={link?.id}
-                      href={link?.url}
-                      target="blank"
-                      className={`w-full h-[40px] rounded-lg flex justify-between items-center px-5 text-white cursor-pointer`}
-                      style={{ backgroundColor: color }}
-                    >
-                      <span className="flex justify-start items-center">
-                        <Icon />{" "}
-                        <span className="ml-3 text-sm">{link?.platform}</span>
-                      </span>
-                      <span>
-                        {handleVerifyUrl(link?.url) && <FaArrowRight />}
-                      </span>
-                    </Link>
-                  );
-                })
-              : Array(5).map((index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="w-full h-[40px] rounded-lg flex justify-start items-center px-5 bg-gray/60 animation:pulse"
-                    ></div>
-                  );
-                })}
+            <div className="w-full flex justify-center items-center gap-3 flex-col max-h-[300px] overflow-auto">
+              {links?.length !== 0
+                ? links?.map((link: any) => {
+                    const { color, icon: Icon } = handleGetRightIconColor(
+                      link?.platform
+                    );
+                    return (
+                      <Link
+                        key={link?.id}
+                        href={link?.url}
+                        target="blank"
+                        className={`w-full h-[40px] rounded-lg flex justify-between items-center px-5 text-white cursor-pointer`}
+                        style={{ backgroundColor: color }}
+                      >
+                        <span className="flex justify-start items-center">
+                          <Icon />{" "}
+                          <span className="ml-3 text-sm">{link?.platform}</span>
+                        </span>
+                        <span>
+                          {handleVerifyUrl(link?.url) && <FaArrowRight />}
+                        </span>
+                      </Link>
+                    );
+                  })
+                : Array(5).map((index) => {
+                    return (
+                      <div
+                        key={index}
+                        className="w-full h-[40px] rounded-lg flex justify-start items-center px-5 bg-gray/60 animation:pulse"
+                      ></div>
+                    );
+                  })}
+            </div>
           </div>
-        </div>
 
-        <p className="mt-20">
-          Also want to share your link like this? visit{" "}
-          <Link href="/">
-            <span className="font-bold text-lg text-[#633CFF]">Devlink</span>
-          </Link>
-        </p>
+          <p className="mt-20 text-center text-sm">
+            Also want to share your link like this? visit{" "}
+            <Link href="/">
+              <span className="font-bold text-lg text-[#633CFF]">Devlink</span>
+            </Link>
+          </p>
+        </div>
       </div>
     </Suspense>
   );
