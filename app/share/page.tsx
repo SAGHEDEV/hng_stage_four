@@ -13,7 +13,6 @@ import { FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
 import { Button, message } from "antd";
 import { useRouter } from "next/navigation";
-import { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 const Page = () => {
   const [user, loading] = useAuthState(auth);
