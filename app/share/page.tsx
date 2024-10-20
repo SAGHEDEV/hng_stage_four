@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firbase";
@@ -9,12 +8,12 @@ import Image from "next/image";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/firbase";
 import Loading from "../components/loading";
-import { handleGetRightIconColor } from "../hooks/handleFrame";
-import { handleVerifyUrl } from "../hooks/handleFrame";
+import { handleGetRightIconColor, handleVerifyUrl } from "../hooks/handleFrame";
 import { FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
 import { Button, message } from "antd";
 import { useRouter } from "next/navigation";
+import { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 const Page = () => {
   const [user, loading] = useAuthState(auth);
@@ -25,50 +24,51 @@ const Page = () => {
 
   const userId = searchParams.get("id");
 
-  const uid = user?.uid || userId;
-
-  const fetchUserData = async () => {
-    try {
-      const docRef = doc(db, "users", uid as string);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        setUserData(docSnap.data()); // Get user data from Firestore
-      } else {
-        console.log("No such user data!");
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
-  const getLinks = async () => {
-    const linkCollectionRef = collection(db, "users", uid as string, "links");
-    try {
-      const docsSnapshot = await getDocs(linkCollectionRef);
-      const documents = docsSnapshot.docs.map((doc) => ({
-        id: doc.id, // Document ID
-        ...doc.data(), // Document data
-      }));
-      setLinks(documents);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  // Ensure this runs on the client side only
   useEffect(() => {
+    if (!userId && !user) return;
+    const uid = user?.uid || userId;
+
+    const fetchUserData = async () => {
+      try {
+        const docRef = doc(db, "users", uid as string);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setUserData(docSnap.data()); // Get user data from Firestore
+        } else {
+          console.log("No such user data!");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    const getLinks = async () => {
+      const linkCollectionRef = collection(db, "users", uid as string, "links");
+      try {
+        const docsSnapshot = await getDocs(linkCollectionRef);
+        const documents = docsSnapshot.docs.map((doc) => ({
+          id: doc.id, // Document ID
+          ...doc.data(), // Document data
+        }));
+        setLinks(documents);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchUserData();
     getLinks();
-  }, []);
+  }, [userId, user]);
 
   if (loading) return <Loading />;
+
   return (
     <Suspense fallback={<Loading />}>
       <div className="flex flex-col justify-center items-center w-full h-screen">
         <div className="absolute w-full h-52 bg-[#633CFF] rounded-b-3xl top-0"></div>
-        <p className="text-xs font-light absolute top-8 text-white hidden md:block">
-          Created with 💜 by SAGHEDEV
-        </p>
+
         {user && (
           <div className="w-full flex justify-between items-center absolute top-8 px-8">
             <Button
@@ -105,16 +105,18 @@ const Page = () => {
             {userData?.displayName}
           </p>
 
-          <div className="w-full flex justify-center items-center gap-3 flex-col max-h-[300px] overflow-scroll">
+          <div className="w-full flex justify-center items-center gap-3 flex-col max-h-[300px] overflow-auto">
             {links?.length !== 0
               ? links?.map((link: any) => {
                   const { color, icon: Icon } = handleGetRightIconColor(
                     link?.platform
                   );
                   return (
-                    <div
+                    <Link
                       key={link?.id}
-                      className={`w-full h-[40px] rounded-lg flex justify-between items-center px-5 text-white`}
+                      href={link?.url}
+                      target="blank"
+                      className={`w-full h-[40px] rounded-lg flex justify-between items-center px-5 text-white cursor-pointer`}
                       style={{ backgroundColor: color }}
                     >
                       <span className="flex justify-start items-center">
@@ -124,7 +126,7 @@ const Page = () => {
                       <span>
                         {handleVerifyUrl(link?.url) && <FaArrowRight />}
                       </span>
-                    </div>
+                    </Link>
                   );
                 })
               : Array(5).map((index) => {
