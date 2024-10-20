@@ -93,13 +93,17 @@ const Page = () => {
         )}
         <div className="py-16 z-10">
           <div className="z-10 !w-90% !min-w-[350px] md:w-[500px] h-fit rounded-3xl shadow-xl p-10 flex flex-col justify-center items-center gap-8 bg-white">
-            <Image
-              src={userData?.photoURL as string}
-              alt="Profile picture"
-              width={148}
-              height={148}
-              className="rounded-full shadow-sm"
-            />
+            {userData.photuUrl ? (
+              <Image
+                src={userData?.photoURL as string}
+                alt="Profile picture"
+                width={148}
+                height={148}
+                className="rounded-full shadow-sm"
+              />
+            ) : (
+              <div className="w-32 h-32 p-10 rounded-full bg-gray-500 animate-pulse"></div>
+            )}
 
             <p className="font-semibold text-xl text-center">
               {userData?.displayName}
