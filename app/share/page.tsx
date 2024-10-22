@@ -92,11 +92,24 @@ const Page = () => {
 
             <Button
               onClick={() => {
-                console.log(window.location.href + `?id=${user.uid}`);
-                navigator.clipboard.writeText(
-                  window.location.href + `?id=${user.uid}`
-                );
-                message.success("Link copied to clipboard!");
+                if (links?.length === 0 && !userData?.photoURL) {
+                  api.warning({
+                    message: "Oga, abeg check again",
+                    description:
+                      "How you go share empty link con no get user profile again? E tire me o!",
+                  });
+                } else { 
+                  if(!userData?.photoURL){
+                    api.warning({
+                      message: "Don't forget you haven't updated your profile",
+                      
+                    });
+                  }
+                  navigator.clipboard.writeText(
+                    window.location.href + `?id=${user.uid}`
+                  );
+                  message.success("Link copied to clipboard!");
+                }
               }}
               className="!w-[91px] !h-[46px] text-[16px] rounded-xl font-semibold !text-white !bg-black hover:!border-none hover:!white hover:!shadow-md hover:!shadow-[#633CFF] !m-0"
             >
