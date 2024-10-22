@@ -11,20 +11,23 @@ import Loading from "../components/loading";
 import { handleGetRightIconColor, handleVerifyUrl } from "../hooks/handleFrame";
 import { FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
-import { Button, message } from "antd";
+import { Button, message, notification } from "antd";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [user, loading] = useAuthState(auth);
   const searchParams = useSearchParams();
   const [userData, setUserData] = useState<any>();
+  const [pageLoading, setPageLoading] = useState(false);
   const [links, setLinks] = useState<any>();
   const router = useRouter();
+  const [api, contextHolder] = notification.useNotification();
 
   const userId = searchParams.get("id");
 
   // Ensure this runs on the client side only
   useEffect(() => {
+    setPageLoading(true);
     if (!userId && !user) return;
     const uid = user?.uid || userId;
 
@@ -59,13 +62,22 @@ const Page = () => {
 
     fetchUserData();
     getLinks();
+    setPageLoading(false);
   }, [userId, user]);
 
-  if (loading) return <Loading />;
+  if (!auth.currentUser?.displayName && user) {
+    api.warning({
+      message:
+        "Kindly upload your name and profile so people can identify you!",
+    });
+  }
+
+  if (loading && pageLoading) return <Loading />;
 
   return (
     <Suspense fallback={<Loading />}>
       <div className="flex flex-col justify-center items-center w-full h-full min-h-screen py-16 px-4">
+        {contextHolder}
         <div className="absolute w-full h-52 bg-[#633CFF] rounded-b-3xl top-0"></div>
 
         {user && (
@@ -93,9 +105,9 @@ const Page = () => {
         )}
         <div className="py-16 z-10">
           <div className="z-10 !w-90% !min-w-[350px] md:w-[500px] h-fit rounded-3xl shadow-xl p-10 flex flex-col justify-center items-center gap-8 bg-white">
-            {userData.photuUrl ? (
+            {userData?.photuUrl ? (
               <Image
-                src={userData?.photoURL as string}
+                src={userData?.photoUrl as string}
                 alt="Profile picture"
                 width={148}
                 height={148}

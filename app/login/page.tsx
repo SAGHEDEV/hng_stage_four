@@ -75,6 +75,7 @@ const Page = () => {
       const userData = {
         email: res.user.email,
         name: res.user.displayName || "Anonymous", // Fallback if displayName is null
+        photoUrl: res.user.photoURL || "",
       };
 
       // Add or update the user's document in Firestore

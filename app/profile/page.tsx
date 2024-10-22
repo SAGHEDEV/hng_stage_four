@@ -7,7 +7,12 @@ import ProfileContainer from "./profieContainer";
 import { notification } from "antd";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, storage } from "@/firebase/firbase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  connectStorageEmulator,
+} from "firebase/storage";
 import { updateProfile, User } from "firebase/auth";
 import Loading from "../components/loading";
 import { db } from "@/firebase/firbase";
@@ -28,6 +33,9 @@ const Page = () => {
       // Add more fields as needed
     });
   };
+
+  console.log(user?.photoURL);
+
   const handleUpdateProfile = async (file: File, name: string) => {
     setupdateLoading(true);
     if (name == "") {
@@ -39,12 +47,13 @@ const Page = () => {
         message: "A profile picture must be provided!",
       });
     } else {
+      console.log(user?.uid);
       const fileRef = ref(storage, user?.uid + ".png");
-      const photoLink = await getDownloadURL(fileRef);
 
       if (typeof file !== "string") {
         await uploadBytes(fileRef, file)
           .then(async () => {
+            const photoLink = await getDownloadURL(fileRef);
             await updateProfile(user as User, {
               displayName: name,
               photoURL: photoLink,
@@ -95,6 +104,13 @@ const Page = () => {
       getLinks();
     }
   }, [auth.currentUser?.uid]);
+
+  if (!auth.currentUser?.displayName) {
+    api.warning({
+      message:
+        "Kindly upload your name and profile so people can identify you!",
+    });
+  }
 
   if (loading) return <Loading />;
 
