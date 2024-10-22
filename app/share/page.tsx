@@ -29,7 +29,7 @@ const Page = () => {
   useEffect(() => {
     setPageLoading(true);
     if (!userId && !user) return;
-    const uid = user?.uid || userId;
+    const uid = userId;
 
     const fetchUserData = async () => {
       try {
@@ -64,14 +64,13 @@ const Page = () => {
     getLinks();
     setPageLoading(false);
     console.log(userData?.photoUrl);
+    if (!auth.currentUser?.displayName && user) {
+      api.warning({
+        message:
+          "Kindly upload your name and profile so people can identify you!",
+      });
+    }
   }, [userId, user]);
-
-  if (!auth.currentUser?.displayName && user) {
-    api.warning({
-      message:
-        "Kindly upload your name and profile so people can identify you!",
-    });
-  }
 
   if (loading && pageLoading) return <Loading />;
 
@@ -81,7 +80,7 @@ const Page = () => {
         {contextHolder}
         <div className="absolute w-full h-52 bg-[#633CFF] rounded-b-3xl top-0"></div>
 
-        {user && (
+        {user && user?.uid == userId ? (
           <div className="w-full flex justify-between items-center absolute top-8 px-8">
             <Button
               onClick={() => router.back()}
@@ -98,11 +97,10 @@ const Page = () => {
                     description:
                       "How you go share empty link con no get user profile again? E tire me o!",
                   });
-                } else { 
-                  if(!userData?.photoURL){
+                } else {
+                  if (!userData?.photoURL) {
                     api.warning({
                       message: "Don't forget you haven't updated your profile",
-                      
                     });
                   }
                   navigator.clipboard.writeText(
@@ -116,6 +114,8 @@ const Page = () => {
               Share
             </Button>
           </div>
+        ) : (
+          ""
         )}
         <div className="py-16 z-10">
           <div className="z-10 !w-90% !min-w-[350px] md:w-[500px] h-fit rounded-3xl shadow-xl p-10 flex flex-col justify-center items-center gap-8 bg-white">

@@ -90,7 +90,7 @@ const Page = () => {
       });
 
       // Redirect to the home page or dashboard
-      router.push("/");
+      router.push("/links");
     } catch (error: any) {
       // Handle any Firebase or Firestore-related errors
       console.error("Error during login or Firestore operation: ", error);

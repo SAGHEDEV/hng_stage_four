@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { LinkType, InputLink } from "./Input";
 import { ChangeEvent } from "react";
-import { Link } from "../home/linkContainer";
+import { Link } from "../links/linkContainer";
 // import { handleConfirm } from "../hooks/handleFrame";
 
 interface SingleLinkProp {

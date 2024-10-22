@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useActionState } from "react";
 import Image from "next/image";
 import { RiLinksFill } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
@@ -8,11 +8,14 @@ import { Button } from "antd";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { auth } from "@/firebase/firbase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const DefaultHeader = () => {
+  const [user] = useAuthState(auth);
   const routes = [
     {
-      key: "/",
+      key: "/links",
       label: "Links",
       icon: RiLinksFill,
     },
@@ -46,7 +49,7 @@ const DefaultHeader = () => {
             </Link>
           ))}
         </div>
-        <Link href="/share">
+        <Link href={`/share?id=${user?.uid}`}>
           <Button className="!h-[46px] !w-[114px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
             Preview
           </Button>
@@ -70,7 +73,7 @@ const DefaultHeader = () => {
             </Link>
           ))}
         </div>
-        <Link href="/share">
+        <Link href={`/share?id=${user?.uid}`}>
           <Button className="!h-[46px] !w-[52px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
             <MdOutlineRemoveRedEye size={20} />
           </Button>
