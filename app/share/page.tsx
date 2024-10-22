@@ -63,6 +63,7 @@ const Page = () => {
     fetchUserData();
     getLinks();
     setPageLoading(false);
+    console.log(userData?.photoUrl);
   }, [userId, user]);
 
   if (!auth.currentUser?.displayName && user) {
@@ -105,9 +106,9 @@ const Page = () => {
         )}
         <div className="py-16 z-10">
           <div className="z-10 !w-90% !min-w-[350px] md:w-[500px] h-fit rounded-3xl shadow-xl p-10 flex flex-col justify-center items-center gap-8 bg-white">
-            {userData?.photuUrl ? (
+            {userData?.photoURL ? (
               <Image
-                src={userData?.photoUrl as string}
+                src={userData?.photoURL as string}
                 alt="Profile picture"
                 width={148}
                 height={148}

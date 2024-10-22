@@ -134,9 +134,7 @@ const LinkContainer = () => {
         // Check if the URL is empty or invalid
         if (url_value === "" || !url_value) {
           api.error({
-            message: `Link ${
-              index + 1
-            } has an empty URL. Aborting batch update.`,
+            message: `Link ${index + 1} has an empty URL. Kindly confirm.`,
           });
           return; // Abort on error
         }
@@ -158,7 +156,7 @@ const LinkContainer = () => {
         // Check if id is valid before creating document reference
         if (!id || typeof id !== "string") {
           api.error({
-            message: `Invalid document ID for link at index ${index}. Aborting batch update.`,
+            message: `Invalid document ID for link at index ${index}. Kindly try again`,
           });
           return; // Abort on error
         }
