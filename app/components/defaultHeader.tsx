@@ -31,7 +31,10 @@ const DefaultHeader = () => {
   return (
     <div>
       <div className="hidden md:flex w-full bg-white p-4 rounded-xl justify-between items-center">
+        <Link href="/">
+        
         <Image src="/devlink-logo.png" width={146} height={32} alt="App Logo" />
+        </Link>
 
         <div className="flex justify-center items-center gap-[16px]">
           {routes.map((route) => (
