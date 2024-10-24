@@ -20,7 +20,7 @@ const Links = () => {
 
   // Redirect to the signup page if no user is logged in
   if (!user && !loading) {
-    router.push("/create-account");
+    router.push("/");
     return null; // Prevent further rendering while redirecting
   }
 

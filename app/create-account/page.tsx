@@ -11,6 +11,7 @@ import { Button, notification } from "antd";
 import { useReducer, ChangeEvent, FormEvent, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
+import Loading from "../components/loading";
 
 const initialUserState = {
   email: "",
@@ -84,7 +85,7 @@ const SignUpPage = () => {
 
   // Handle loading state: Wait for Firebase to check the user's session
   if (loading) {
-    return <p>Loading...</p>; // You can replace this with a loading spinner or animation
+    return <Loading/>; // You can replace this with a loading spinner or animation
   }
 
   // Redirect to home if user is logged in
