@@ -78,7 +78,7 @@ export default function Home() {
           </div>
 
           <Link href="/create-account">
-            <div className="w-[300px] p-5 rounded-md bg-[#633CFF] text-white text-center mt-5">
+            <div className="w-[300px] p-5 rounded-md bg-[#633CFF] text-white text-center mt-5 hover:animate-bounce">
               Get Started Now!
             </div>
           </Link>
