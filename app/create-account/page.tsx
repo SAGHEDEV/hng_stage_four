@@ -85,12 +85,12 @@ const SignUpPage = () => {
 
   // Handle loading state: Wait for Firebase to check the user's session
   if (loading) {
-    return <Loading/>; // You can replace this with a loading spinner or animation
+    return <Loading />; // You can replace this with a loading spinner or animation
   }
 
   // Redirect to home if user is logged in
   if (user) {
-    router.push("/");
+    router.push("/links");
     // return null; // Prevent further rendering while redirecting
   }
 
