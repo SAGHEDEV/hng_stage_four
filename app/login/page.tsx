@@ -14,11 +14,9 @@ import { auth } from "@/firebase/firbase";
 import { Button, notification } from "antd";
 import { useRouter } from "next/navigation";
 import { useReducer, ChangeEvent, FormEvent, useState } from "react";
-import { setDoc, doc } from "firebase/firestore";
-import { db } from "@/firebase/firbase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Loading from "../components/loading";
-import { handleSaveUserCopy } from "../profile/page";
+import { handleSaveUserCopy } from "../hooks/handleFrame";
 
 const initialUserState = {
   email: "",

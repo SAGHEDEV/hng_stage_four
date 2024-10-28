@@ -7,16 +7,12 @@ import ProfileContainer from "./profieContainer";
 import { notification } from "antd";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, storage } from "@/firebase/firbase";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  connectStorageEmulator,
-} from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updateProfile, User } from "firebase/auth";
 import Loading from "../components/loading";
 import { db } from "@/firebase/firbase";
-import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+import { handleSaveUserCopy } from "../hooks/handleFrame";
 
 const Page = () => {
   const [user, loading] = useAuthState(auth);
@@ -120,13 +116,3 @@ const Page = () => {
 };
 
 export default Page;
-
-export const handleSaveUserCopy = async (user: any) => {
-  const userDocRef = doc(db, "users", user.uid);
-  await setDoc(userDocRef, {
-    displayName: user.displayName,
-    email: user.email,
-    photoURL: user.photoURL,
-    // Add more fields as needed
-  });
-};

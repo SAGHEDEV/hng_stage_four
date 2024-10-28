@@ -158,7 +158,7 @@ const Page = ({
                         key={link?.id}
                         href={link?.url}
                         target="blank"
-                        className={`w-full h-[40px] rounded-lg flex justify-between items-center px-5 text-white cursor-pointer`}
+                        className={`w-full h-[45px] rounded-lg flex justify-between items-center px-5 text-white cursor-pointer`}
                         style={{ backgroundColor: color }}
                       >
                         <span className="flex justify-start items-center">

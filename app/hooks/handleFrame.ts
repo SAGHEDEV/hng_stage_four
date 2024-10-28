@@ -10,8 +10,8 @@ import { FaReddit } from "react-icons/fa";
 import { FaSnapchat } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { GrStatusUnknown } from "react-icons/gr";
-import { Modal } from "antd";
-
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/firebase/firbase";
 interface HandleConfirmProps {
   data?: any;
   title?: string;
@@ -84,6 +84,16 @@ export const handleVerifyUrl = (url: string) => {
   } catch (error) {
     return false;
   }
+};
+
+export const handleSaveUserCopy = async (user: any) => {
+  const userDocRef = doc(db, "users", user.uid);
+  await setDoc(userDocRef, {
+    displayName: user.displayName,
+    email: user.email,
+    photoURL: user.photoURL,
+    // Add more fields as needed
+  });
 };
 
 // export const handleConfirm = ({
