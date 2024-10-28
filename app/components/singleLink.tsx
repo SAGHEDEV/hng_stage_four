@@ -1,17 +1,22 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { LinkType, InputLink } from "./Input";
 import { ChangeEvent } from "react";
+import { LinkType, InputLink } from "./Input";
 import { Link } from "../links/linkContainer";
-// import { handleConfirm } from "../hooks/handleFrame";
 
 interface SingleLinkProp {
   link: Link;
   index: number;
   handleRemoveLink: (id: string) => void;
-  handleUpadteUrl: (inded: number, value: string) => void;
+  handleUpadteUrl: (index: number, value: string) => void;
   handleUpdatePlatform: (index: number, value: string) => void;
+}
+
+// Debounce function to limit state updates
+function useDebouncedEffect(effect: () => void, deps: any[], delay: number) {
+  useEffect(() => {
+    const handler = setTimeout(() => effect(), delay);
+    return () => clearTimeout(handler);
+  }, [...deps, delay]);
 }
 
 const SingleLink = (props: SingleLinkProp) => {
@@ -19,18 +24,34 @@ const SingleLink = (props: SingleLinkProp) => {
   const [currentPlat, setCurrentPlat] = useState(props.link.platform);
   const [linkd, setLinkd] = useState(props.link?.url);
 
+  // Sync internal state when the props.link changes but only if values are different
   useEffect(() => {
-    props.handleUpadteUrl(props.index, linkd);
-  }, [linkd]);
+    if (props.link.url !== linkd) {
+      setLinkd(props.link.url);
+    }
+    if (props.link.platform !== currentPlat) {
+      setCurrentPlat(props.link.platform);
+    }
+  }, [props.link]);
 
-  // console.log(props.link);
+  // Debounce updating the parent state to avoid multiple updates
+  useDebouncedEffect(
+    () => {
+      props.handleUpadteUrl(props.index, linkd);
+    },
+    [linkd],
+    300
+  ); // Debounce with a delay of 300ms
 
   return (
     <div className="p-5 rounded-xl bg-[#FAFAFA] flex flex-col justify-center items-center">
       <span className="w-full flex justify-between items-center text-[16px] text-[#737373]">
         <span className="font-bold">Link #{props.index + 1}</span>
         <span
-          onClick={() => props.handleRemoveLink(props.link.id)}
+          onClick={() => {
+            props.handleRemoveLink(props.link.id);
+            console.log(props.link.id);
+          }}
           className="cursor-pointer"
         >
           Remove
@@ -49,20 +70,9 @@ const SingleLink = (props: SingleLinkProp) => {
         <InputLink
           value={linkd}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            // e.preventDefault();
             setLinkd(e.target.value);
           }}
         />
-        {/* <div className="w-full p-2 border-t flex justify-end align-center">
-          <button
-            onClick={() =>
-              props.handleSaveSingleLink(props.link.id, props.index)
-            }
-            className="w-full h-[46px] text-[16px] rounded-xl cursor-pointer font-semibold text-white bg-[#633CFF] hover:border-none hover:bg-[#1b84ed] hover:shadow-md hover:shadow-[#633CFF] m-0"
-          >
-            Save
-          </button>
-        </div> */}
       </div>
     </div>
   );

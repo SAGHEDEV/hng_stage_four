@@ -129,6 +129,32 @@ const ProfileContainer = ({
           Save
         </Button>
       </div>
+      {/* <div className="p-8 bg-[#FAFAFA] w-full flex flex-col justify-center items-center gap-4 mt-6">
+        <h2 className="text-[32px] text-left w-full font-bold text-[#333333] mb-2">
+          Update Password
+        </h2>
+        <div className="flex flex-col justify-start items-start gap-4 w-full">
+          <div className="w-full flex flex-col md:flex-row justify-between items-center">
+            <p className="text-[#333333] w-full">First Name: *</p>
+            <InputText
+              icon={FaCircleUser}
+              placeholder="Enter Full Name"
+              value={userName as string}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
+          <div className="w-full flex flex-col md:flex-row justify-between items-center">
+            <p className="text-[#333333] w-full">Email: *</p>
+            <InputEmail
+              error=""
+              icon={MdEmail}
+              placeholder="Enter Full Name"
+              value={user?.email as string}
+              onChange={(e) => console.log}
+            />
+          </div>
+        </div>
+      </div> */}
     </div>
   );
 };

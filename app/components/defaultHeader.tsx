@@ -32,8 +32,12 @@ const DefaultHeader = () => {
     <div>
       <div className="hidden md:flex w-full bg-white p-4 rounded-xl justify-between items-center">
         <Link href="/">
-        
-        <Image src="/devlink-logo.png" width={146} height={32} alt="App Logo" />
+          <Image
+            src="/devlink-logo.png"
+            width={146}
+            height={32}
+            alt="App Logo"
+          />
         </Link>
 
         <div className="flex justify-center items-center gap-[16px]">
@@ -52,7 +56,7 @@ const DefaultHeader = () => {
             </Link>
           ))}
         </div>
-        <Link href={`/share?id=${user?.uid}`}>
+        <Link href={`/share/${user?.uid}`}>
           <Button className="!h-[46px] !w-[114px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
             Preview
           </Button>
@@ -76,7 +80,7 @@ const DefaultHeader = () => {
             </Link>
           ))}
         </div>
-        <Link href={`/share?id=${user?.uid}`}>
+        <Link href={`/share/${user?.uid}`}>
           <Button className="!h-[46px] !w-[52px] text-[16px] !font-semibold !text-[#633CFF] !bg-white border !border-[#633CFF] hover:!bg-[#EFEBFF]  !m-0">
             <MdOutlineRemoveRedEye size={20} />
           </Button>

@@ -10,10 +10,6 @@ import FrameContainer from "../components/frameContainer";
 import {
   getDocs,
   collection,
-  addDoc,
-  getDoc,
-  setDoc,
-  updateDoc,
   doc,
   writeBatch,
   deleteDoc,
@@ -21,6 +17,7 @@ import {
 import { useLocalStorage } from "../hooks/localStorage";
 import { auth } from "@/firebase/firbase";
 import { handleVerifyUrl } from "../hooks/handleFrame";
+import Loading from "../components/loading";
 
 export interface Link {
   platform: string;
@@ -32,6 +29,7 @@ const LinkContainer = () => {
   const [links, setLinks] = useState<any>([]);
   const { setItem } = useLocalStorage();
   const [saveLoading, setSaveLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   // const userReference = doc(db, "user", auth?.currentUser?.uid as string);
   const linkCollectionRef = collection(
@@ -42,6 +40,7 @@ const LinkContainer = () => {
   );
 
   const getLinks = async () => {
+    setFetchLoading(true);
     try {
       await getDocs(linkCollectionRef).then((docs) => {
         const documents = docs.docs.map((doc) => ({
@@ -53,12 +52,15 @@ const LinkContainer = () => {
     } catch (error) {
       console.log(error);
     }
+    setFetchLoading(false);
   };
 
   const addNewLink = () => {
     setLinks([...links, { platform: "Github", url: "" }]);
   };
   const handleRemoveLink = async (id: string) => {
+    console.log(id || "undefined");
+    // Create a reference to the document to be deleted
     const docRef = doc(
       db,
       "users",
@@ -66,15 +68,34 @@ const LinkContainer = () => {
       "links",
       id
     );
+
+    // Store a reference to the current state before deleting the link
+    const previousLinks = [...links]; // Clone the current links array
+
     try {
+      // Optimistically update the UI by removing the link from the local state
+      setLinks((prevLinks: any) =>
+        prevLinks.filter((link: any) => link.id !== id)
+      );
+
+      // Attempt to delete the link from Firestore
       await deleteDoc(docRef);
-      getLinks();
-    } catch (e: any) {
-      console.log(e);
+
+      // Success message
+      api.success({
+        message: "Link has been removed successfully!",
+      });
+    } catch (error) {
+      console.error("Failed to delete link:", error);
+
+      // Rollback to the previous state if deletion fails
+      setLinks(previousLinks); // Restore the original links array
+
+      // Error message
+      api.error({
+        message: "Failed to remove link. Please try again.",
+      });
     }
-    api.success({
-      message: "Link has been removed successfully!!",
-    });
   };
 
   const handleUpadteUrl = (index: number, value: string) => {
@@ -186,6 +207,7 @@ const LinkContainer = () => {
       console.error("Batch error:", error);
     } finally {
       setSaveLoading(false);
+      getLinks();
     }
   };
 
@@ -221,22 +243,26 @@ const LinkContainer = () => {
           className="w-full"
           onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
         >
-          <div className="my-6 w-full flex flex-col gap-6">
-            {links.length === 0 ? (
-              <EmptyLink />
-            ) : (
-              links.map((link: Link, index: number) => (
-                <SingleLink
-                  key={index}
-                  link={link}
-                  index={index}
-                  handleRemoveLink={handleRemoveLink}
-                  handleUpadteUrl={handleUpadteUrl}
-                  handleUpdatePlatform={handleUpdatePlatform}
-                />
-              ))
-            )}
-          </div>
+          {fetchLoading ? (
+            <Loading />
+          ) : (
+            <div className="my-6 w-full flex flex-col gap-6">
+              {links.length === 0 ? (
+                <EmptyLink />
+              ) : (
+                links.map((link: Link, index: number) => (
+                  <SingleLink
+                    key={index}
+                    link={link}
+                    index={index}
+                    handleRemoveLink={handleRemoveLink}
+                    handleUpadteUrl={handleUpadteUrl}
+                    handleUpdatePlatform={handleUpdatePlatform}
+                  />
+                ))
+              )}
+            </div>
+          )}
           <div className="w-full p-6 border-t flex justify-end align-center">
             <Button
               loading={saveLoading}

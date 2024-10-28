@@ -10,14 +10,15 @@ import {
   signInWithEmailAndPassword,
   browserSessionPersistence,
 } from "firebase/auth";
-// import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firbase";
 import { Button, notification } from "antd";
 import { useRouter } from "next/navigation";
 import { useReducer, ChangeEvent, FormEvent, useState } from "react";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "@/firebase/firbase";
-import { SuiteContext } from "node:test";
+import { useAuthState } from "react-firebase-hooks/auth";
+import Loading from "../components/loading";
+import { handleSaveUserCopy } from "../profile/page";
 
 const initialUserState = {
   email: "",
@@ -42,16 +43,16 @@ function reducer(
 const Page = () => {
   const [state, dispatch] = useReducer(reducer, initialUserState);
   const [passwordErr, setPasswordErr] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [subLoading, setSubLoading] = useState(false);
 
   const router = useRouter();
 
   const handleLoginAccount = async () => {
-    setLoading(true);
+    setSubLoading(true);
 
     if (state.password.length < 8) {
       setPasswordErr("Password should not be less than 8 characters.");
-      setLoading(false);
+      setSubLoading(false);
       return;
     } else {
       setPasswordErr("");
@@ -68,18 +69,7 @@ const Page = () => {
         state.password
       );
 
-      const uid = res.user.uid;
-      const userRef = doc(db, "users", uid);
-
-      // Prepare user data
-      const userData = {
-        email: res.user.email,
-        name: res.user.displayName || "Anonymous", // Fallback if displayName is null
-        photoUrl: res.user.photoURL || "",
-      };
-
-      // Add or update the user's document in Firestore
-      await setDoc(userRef, userData);
+      handleSaveUserCopy(res.user);
 
       console.log("User document successfully created/updated!");
 
@@ -104,8 +94,21 @@ const Page = () => {
       });
     }
 
-    setLoading(false);
+    setSubLoading(false);
   };
+
+  const [user, loading] = useAuthState(auth);
+
+  // Handle loading state: Wait for Firebase to check the user's session
+  if (loading) {
+    return <Loading />; // You can replace this with a loading spinner or animation
+  }
+
+  // Redirect to home if user is logged in
+  if (user) {
+    router.push("/links");
+    // return null; // Prevent further rendering while redirecting
+  }
 
   return (
     <div className="w-full md:flex md:h-screen justify-center items-center flex-col gap-[45px] p-[32px] py-6">
@@ -153,8 +156,9 @@ const Page = () => {
             error={passwordErr}
           />
           <Button
-            loading={loading}
+            loading={subLoading}
             onClick={handleLoginAccount}
+            htmlType="submit"
             className="w-full font !h-[46px] text-[16px] rounded-xl !font-semibold !text-white !bg-[#633CFF] hover:border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:shadow-[#633CFF] !m-0"
           >
             Login Account

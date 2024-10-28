@@ -7,14 +7,23 @@ import { auth } from "@/firebase/firbase";
 import Image from "next/image";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/firbase";
-import Loading from "../components/loading";
-import { handleGetRightIconColor, handleVerifyUrl } from "../hooks/handleFrame";
+import Loading from "../../components/loading";
+import {
+  handleGetRightIconColor,
+  handleVerifyUrl,
+} from "../../hooks/handleFrame";
 import { FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
 import { Button, message, notification } from "antd";
 import { useRouter } from "next/navigation";
 
-const Page = () => {
+const Page = ({
+  params,
+}: {
+  params: {
+    username: string;
+  };
+}) => {
   const [user, loading] = useAuthState(auth);
   const searchParams = useSearchParams();
   const [userData, setUserData] = useState<any>();
@@ -23,21 +32,21 @@ const Page = () => {
   const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
 
-  const userId = searchParams.get("id");
+  const userId = params.username;
 
   // Ensure this runs on the client side only
   useEffect(() => {
     setPageLoading(true);
     if (!userId && !user) return;
-    const uid = userId;
 
     const fetchUserData = async () => {
       try {
-        const docRef = doc(db, "users", uid as string);
+        const docRef = doc(db, "users", userId as string);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           setUserData(docSnap.data()); // Get user data from Firestore
+          console.log(docSnap.data());
         } else {
           console.log("No such user data!");
         }
@@ -47,7 +56,12 @@ const Page = () => {
     };
 
     const getLinks = async () => {
-      const linkCollectionRef = collection(db, "users", uid as string, "links");
+      const linkCollectionRef = collection(
+        db,
+        "users",
+        userId as string,
+        "links"
+      );
       try {
         const docsSnapshot = await getDocs(linkCollectionRef);
         const documents = docsSnapshot.docs.map((doc) => ({
@@ -103,9 +117,7 @@ const Page = () => {
                       message: "Don't forget you haven't updated your profile",
                     });
                   }
-                  navigator.clipboard.writeText(
-                    window.location.href + `?id=${user.uid}`
-                  );
+                  navigator.clipboard.writeText(window.location.href);
                   message.success("Link copied to clipboard!");
                 }
               }}
@@ -132,7 +144,7 @@ const Page = () => {
             )}
 
             <p className="font-semibold text-xl text-center">
-              {userData?.displayName}
+              {userData?.displayName || "anonymous"}
             </p>
 
             <div className="w-full flex justify-center items-center gap-3 flex-col max-h-[300px] overflow-auto">
