@@ -54,7 +54,7 @@ const FrameContainer = ({ links }: any) => {
                   return (
                     <div
                       key={link?.id}
-                      className={`w-full h-[40px] rounded-lg flex justify-between items-center px-5 text-white`}
+                      className={`w-full h-[50px] rounded-lg flex justify-between items-center px-5 text-white`}
                       style={{ backgroundColor: color }}
                     >
                       <span className="flex justify-start items-center">

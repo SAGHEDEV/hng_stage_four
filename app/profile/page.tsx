@@ -18,21 +18,11 @@ import Loading from "../components/loading";
 import { db } from "@/firebase/firbase";
 import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 
-export const handleSaveUserCopy = async (user: any) => {
-  const userDocRef = doc(db, "users", user.uid);
-  await setDoc(userDocRef, {
-    displayName: user.displayName,
-    email: user.email,
-    photoURL: user.photoURL,
-    // Add more fields as needed
-  });
-};
 const Page = () => {
   const [user, loading] = useAuthState(auth);
   const [api, contextHolder] = notification.useNotification();
   const [updateLoading, setupdateLoading] = useState(false);
   const [links, setLinks] = useState<any>([]);
-
 
   console.log(user?.photoURL);
 
@@ -130,3 +120,13 @@ const Page = () => {
 };
 
 export default Page;
+
+export const handleSaveUserCopy = async (user: any) => {
+  const userDocRef = doc(db, "users", user.uid);
+  await setDoc(userDocRef, {
+    displayName: user.displayName,
+    email: user.email,
+    photoURL: user.photoURL,
+    // Add more fields as needed
+  });
+};
