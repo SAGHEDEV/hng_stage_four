@@ -9,14 +9,17 @@ import {
   setPersistence,
   signInWithEmailAndPassword,
   browserSessionPersistence,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { auth } from "@/firebase/firbase";
-import { Button, notification } from "antd";
+import { Button, notification, Divider } from "antd";
 import { useRouter } from "next/navigation";
 import { useReducer, ChangeEvent, FormEvent, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Loading from "../components/loading";
 import { handleSaveUserCopy } from "../hooks/handleFrame";
+import { FaGoogle } from "react-icons/fa";
 
 const initialUserState = {
   email: "",
@@ -95,6 +98,27 @@ const Page = () => {
     setSubLoading(false);
   };
 
+  const handleSignInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider)
+      .then((res) => {
+        notification.success({
+          message: `Login Successful`,
+          description: `You can now create and share your links as you wish!`,
+        });
+        handleSaveUserCopy(res);
+      })
+      .catch((error) => {
+        console.log(error);
+        notification.error({
+          message: `Error ${error.code || "Unknown Error"}!`,
+          description: `${
+            error.message || "An error occurred, please try again."
+          }`,
+        });
+      });
+  };
+
   const [user, loading] = useAuthState(auth);
 
   // Handle loading state: Wait for Firebase to check the user's session
@@ -153,6 +177,9 @@ const Page = () => {
             placeholder="Enter Correct Password"
             error={passwordErr}
           />
+          <Link href="forgot-password" className="w-full text-left text-xs ">
+            Forgot Password?
+          </Link>
           <Button
             loading={subLoading}
             onClick={handleLoginAccount}
@@ -167,6 +194,13 @@ const Page = () => {
               Create account
             </Link>
           </p>
+          <div
+            onClick={handleSignInWithGoogle}
+            className="flex justify-center items-center w-full relative text-[16px] bg-white !gap-[12px] px-[16px] py[16px]  rounded-xl  !h-[48px] !border !border-[#D9D9D9] active:!border-[#633CFF] active:!border-2 active:!shadow-xl active:bg-transparent active:!shadow-[#633CFF]/25"
+          >
+            <FaGoogle size={20} className="text-[#633CFF]" />
+            Sign in with Google
+          </div>
         </form>
       </div>
     </div>
