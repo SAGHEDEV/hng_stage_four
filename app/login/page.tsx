@@ -196,7 +196,7 @@ const Page = () => {
           </p>
           <div
             onClick={handleSignInWithGoogle}
-            className="flex justify-center items-center w-full relative text-[16px] bg-white !gap-[12px] px-[16px] py[16px]  rounded-xl  !h-[48px] !border !border-[#D9D9D9] active:!border-[#633CFF] active:!border-2 active:!shadow-xl active:bg-transparent active:!shadow-[#633CFF]/25"
+            className="flex justify-center cursor-pointer items-center w-full relative text-[16px] bg-white !gap-[12px] px-[16px] py[16px]  rounded-xl  !h-[48px] !border !border-[#D9D9D9] active:!border-[#633CFF] active:!border-2 active:!shadow-xl active:bg-transparent active:!shadow-[#633CFF]/25"
           >
             <FaGoogle size={20} className="text-[#633CFF]" />
             Sign in with Google

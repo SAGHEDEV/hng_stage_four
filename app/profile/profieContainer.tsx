@@ -267,15 +267,12 @@ const ProfileContainer = ({
       </div>
 
       <div className="flex justify-between items-center p-8 border broder-[#633CFF] rounded-xl mt-10 gap-7">
-        <Button
-          loading={newPassword.loading}
-          className="w-full !h-[46px] text-[16px] rounded-xl font-bold !text-white !bg-red-700 hover:!border-none hover:!bg-red-700 hover:!shadow-md hover:!red-500 !m-0"
-        >
+        <Button className="w-full !h-[46px] text-[16px] rounded-xl font-bold !text-white !bg-red-700 hover:!border-none hover:!bg-red-700 hover:!shadow-md hover:!red-500 !m-0">
           Delete Account
         </Button>
         <Button
           onClick={handleSignOut}
-          className="w-full !h-[46px] text-[16px] rounded-xl font-bold border !border-[#633CFF] !bg-white !text-[#633CFF] hover:!border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:!shadow-[#633CFF] !m-0"
+          className="w-full !h-[46px] text-[16px] rounded-xl font-bold border !border-[#633CFF] !bg-white !text-[#633CFF] hover:!border-none hover:!bg-[#1b84ed] hover:!shadow-md hover:!shadow-[#633CFF] !m-0 hover:!text-white"
         >
           Logout
         </Button>

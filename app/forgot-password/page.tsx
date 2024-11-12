@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Loading from "../components/loading";
+import { BsArrowLeft } from "react-icons/bs";
 
 const Page = () => {
   const [email, setEmail] = useState("");
@@ -94,6 +95,12 @@ const Page = () => {
             Send Verification Email
           </Button>
         </form>
+        <p
+          onClick={() => router.back()}
+          className="text-sm cursor-pointer flex gap-2 items-center"
+        >
+          <BsArrowLeft /> Go Back
+        </p>
       </div>
     </div>
   );

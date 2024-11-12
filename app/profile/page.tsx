@@ -20,7 +20,7 @@ const Page = () => {
   const [updateLoading, setupdateLoading] = useState(false);
   const [links, setLinks] = useState<any>([]);
 
-  console.log(user?.photoURL);
+ 
 
   const handleUpdateProfile = async (file: File, name: string) => {
     setupdateLoading(true);
