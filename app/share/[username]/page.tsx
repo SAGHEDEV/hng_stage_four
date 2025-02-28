@@ -34,19 +34,16 @@ const Page = ({
 
   const userId = params.username;
 
-  // Ensure this runs on the client side only
   useEffect(() => {
     setPageLoading(true);
     if (!userId && !user) return;
 
     const fetchUserData = async () => {
+      const userDataReference = doc(db, "users", userId as string);
       try {
-        const docRef = doc(db, "users", userId as string);
-        const docSnap = await getDoc(docRef);
-
+        const docSnap = await getDoc(userDataReference);
         if (docSnap.exists()) {
-          setUserData(docSnap.data()); // Get user data from Firestore
-          console.log(docSnap.data());
+          setUserData(docSnap.data());
         } else {
           console.log("No such user data!");
         }
@@ -65,8 +62,8 @@ const Page = ({
       try {
         const docsSnapshot = await getDocs(linkCollectionRef);
         const documents = docsSnapshot.docs.map((doc) => ({
-          id: doc.id, // Document ID
-          ...doc.data(), // Document data
+          id: doc.id,
+          ...doc.data(), 
         }));
         setLinks(documents);
       } catch (error) {
@@ -77,7 +74,6 @@ const Page = ({
     fetchUserData();
     getLinks();
     setPageLoading(false);
-    console.log(userData?.photoUrl);
     if (!auth.currentUser?.displayName && user) {
       api.warning({
         message:
